@@ -1,6 +1,7 @@
 package dev.aaa1115910.bv.entity.carddata
 
 import java.time.ZoneId
+import java.util.TimeZone
 import java.time.ZonedDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,7 +14,7 @@ class VideoCardDataTest {
         avid = 1, title = "t", cover = "", upName = upName, play = play, pubTime = pubTime
     )
 
-    private fun VideoCardData.meta() = metaLine(nowSec * 1000, zone)
+    private fun VideoCardData.meta() = metaLine(nowSec * 1000, TimeZone.getTimeZone(zone))
 
     @Test
     fun metaLineJoinsAll() {
