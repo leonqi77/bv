@@ -43,6 +43,8 @@ import kotlin.math.roundToInt
 @Composable
 fun PictureMenuList(
     modifier: Modifier = Modifier,
+    menuFocusRequester: FocusRequester = remember { FocusRequester() },
+    initialItem: VideoPlayerPictureMenuItem? = null,
     onResolutionChange: (Resolution) -> Unit,
     onCodecChange: (VideoCodec) -> Unit,
     onAspectRatioChange: (VideoAspectRatio) -> Unit,
@@ -53,9 +55,11 @@ fun PictureMenuList(
     val context = LocalContext.current
     val focusState = LocalMenuFocusStateData.current
     val videoPlayerConfigData = LocalVideoPlayerConfigData.current
-    val parentMenuFocusRequester = remember { FocusRequester() }
+    val parentMenuFocusRequester = menuFocusRequester
     val parentMenuPositionFocusRequester = remember { FocusRequester() }
-    var selectedPictureMenuItem by remember { mutableStateOf(VideoPlayerPictureMenuItem.Resolution) }
+    var selectedPictureMenuItem by remember {
+        mutableStateOf(initialItem ?: VideoPlayerPictureMenuItem.Resolution)
+    }
     val resolutionList = remember(videoPlayerConfigData.availableResolutions) {
         videoPlayerConfigData.availableResolutions.sortedByDescending { it.code }
     }
@@ -155,11 +159,11 @@ fun PictureMenuList(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {
-            itemsIndexed(VideoPlayerPictureMenuItem.entries.toMutableList()) { index, item ->
+            itemsIndexed(VideoPlayerPictureMenuItem.entries.toMutableList()) { _, item ->
                 MenuListItem(
                     modifier = Modifier
                         .ifElse(
-                            index == 0,
+                            item == selectedPictureMenuItem,
                             Modifier.focusRequester(parentMenuPositionFocusRequester)
                         ),
                     text = item.getDisplayName(context),

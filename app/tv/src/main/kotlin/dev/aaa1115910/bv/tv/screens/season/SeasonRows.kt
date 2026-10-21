@@ -166,7 +166,7 @@ fun SeasonEpisodeRow(
                                 episode.aid,
                                 episode.cid,
                                 episode.id,
-                                episode.longTitle,
+                                episode.playerTitle(),
                                 if (episode.id == lastPlayedId) lastPlayedTime else 0
                             )
                         }
@@ -182,6 +182,10 @@ private fun episodeBadge(episode: Episode): String? {
     val number = episode.title.trim().toIntOrNull()
     return if (number != null) "第${number}话" else episode.title.takeIf { it.isNotBlank() }
 }
+
+/** 播放器里的分集标题：“第N话 标题”；标题不是数字时用原标题代替“第N话”。 */
+internal fun Episode.playerTitle(): String =
+    listOfNotNull(episodeBadge(this), longTitle.takeIf { it.isNotBlank() }).joinToString(" ")
 
 /** [lastTime] 单位为秒，[durationMs] 单位为毫秒；lastTime < 0 表示已看完。 */
 private fun watchProgress(lastTime: Int, durationMs: Int): Float? {

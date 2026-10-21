@@ -30,6 +30,7 @@ data class VideoPlayerVideoInfoData(
     val upName: String = "",
     val upFace: String = "",
     val upFollowed: Boolean = false,
+    val fromSeason: Boolean = false,
 )
 
 data class VideoPlayerClockData(

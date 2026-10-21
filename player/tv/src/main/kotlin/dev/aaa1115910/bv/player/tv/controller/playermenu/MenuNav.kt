@@ -32,10 +32,10 @@ fun MenuNavList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(16.dp)
     ) {
-        itemsIndexed(VideoPlayerMenuNavItem.entries) { index, item ->
+        itemsIndexed(VideoPlayerMenuNavItem.entries) { _, item ->
             MenuListItem(
                 modifier = Modifier
-                    .ifElse(index == 0, Modifier.focusRequester(focusRequester)),
+                    .ifElse(item == selectedMenu, Modifier.focusRequester(focusRequester)),
                 text = item.getDisplayName(context),
                 icon = item.icon,
                 expanded = isFocusing,

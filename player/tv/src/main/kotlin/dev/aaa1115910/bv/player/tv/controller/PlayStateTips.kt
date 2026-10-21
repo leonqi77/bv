@@ -45,7 +45,9 @@ import java.io.ByteArrayOutputStream
 
 @Composable
 fun PlayStateTips(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    // false while the controls layer is visible: it already shows the paused state
+    showPauseIcon: Boolean = true
 ) {
     val videoPlayerStateData = LocalVideoPlayerStateData.current
     val videoPlayerPaymentData = LocalVideoPlayerPaymentData.current
@@ -53,7 +55,7 @@ fun PlayStateTips(
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        if (!videoPlayerStateData.isPlaying && !videoPlayerStateData.isBuffering && !videoPlayerStateData.isError) {
+        if (showPauseIcon && !videoPlayerStateData.isPlaying && !videoPlayerStateData.isBuffering && !videoPlayerStateData.isError) {
             PauseIcon(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)

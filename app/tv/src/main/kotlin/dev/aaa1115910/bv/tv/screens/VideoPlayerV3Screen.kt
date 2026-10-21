@@ -58,6 +58,7 @@ fun VideoPlayerV3Screen(
             upName = playerViewModel.upName,
             upFace = playerViewModel.upFace,
             upFollowed = playerViewModel.upFollowed,
+            fromSeason = playerViewModel.fromSeason,
         ),
         LocalVideoPlayerLogsData provides VideoPlayerLogsData(
             logs = playerViewModel.logs

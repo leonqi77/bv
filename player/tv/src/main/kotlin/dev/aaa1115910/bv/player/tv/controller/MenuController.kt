@@ -51,6 +51,7 @@ import dev.aaa1115910.bv.player.entity.VideoAspectRatio
 import dev.aaa1115910.bv.player.entity.VideoCodec
 import dev.aaa1115910.bv.player.entity.VideoPlayerConfigData
 import dev.aaa1115910.bv.player.entity.VideoPlayerMenuNavItem
+import dev.aaa1115910.bv.player.entity.VideoPlayerPictureMenuItem
 import dev.aaa1115910.bv.player.tv.controller.playermenu.ClosedCaptionMenuList
 import dev.aaa1115910.bv.player.tv.controller.playermenu.DanmakuMenuList
 import dev.aaa1115910.bv.player.tv.controller.playermenu.MenuNavList
@@ -64,6 +65,8 @@ import kotlinx.coroutines.delay
 fun MenuController(
     modifier: Modifier = Modifier,
     show: Boolean,
+    initialNav: VideoPlayerMenuNavItem? = null,
+    initialPictureItem: VideoPlayerPictureMenuItem? = null,
     onResolutionChange: (Resolution) -> Unit = {},
     onCodecChange: (VideoCodec) -> Unit = {},
     onAspectRatioChange: (VideoAspectRatio) -> Unit,
@@ -82,11 +85,16 @@ fun MenuController(
 ) {
     val scope = rememberCoroutineScope()
     val defaultFocusRequester = remember { FocusRequester() }
+    val pictureMenuFocusRequester = remember { FocusRequester() }
 
     LaunchedEffect(show) {
         if (show) {
             delay(100)
-            defaultFocusRequester.requestFocus(scope)
+            if (initialPictureItem != null) {
+                pictureMenuFocusRequester.requestFocus(scope)
+            } else {
+                defaultFocusRequester.requestFocus(scope)
+            }
         }
     }
 
@@ -101,6 +109,9 @@ fun MenuController(
         ) {
             MenuController(
                 defaultFocusRequester = defaultFocusRequester,
+                pictureMenuFocusRequester = pictureMenuFocusRequester,
+                initialNav = initialNav,
+                initialPictureItem = initialPictureItem,
                 onResolutionChange = onResolutionChange,
                 onCodecChange = onCodecChange,
                 onAspectRatioChange = onAspectRatioChange,
@@ -125,6 +136,9 @@ fun MenuController(
 fun MenuController(
     modifier: Modifier = Modifier,
     defaultFocusRequester: FocusRequester,
+    pictureMenuFocusRequester: FocusRequester = remember { FocusRequester() },
+    initialNav: VideoPlayerMenuNavItem? = null,
+    initialPictureItem: VideoPlayerPictureMenuItem? = null,
     onResolutionChange: (Resolution) -> Unit = {},
     onCodecChange: (VideoCodec) -> Unit = {},
     onAspectRatioChange: (VideoAspectRatio) -> Unit,
@@ -141,8 +155,16 @@ fun MenuController(
     onSubtitleBottomPadding: (Dp) -> Unit,
     onPlayModeChange: (PlayMode) -> Unit
 ) {
-    var selectedNavItem by remember { mutableStateOf(VideoPlayerMenuNavItem.Picture) }
-    var focusState by remember { mutableStateOf(MenuFocusState.MenuNav) }
+    // A picture item can only be opened inside the Picture section; it starts with focus on that item.
+    var selectedNavItem by remember {
+        mutableStateOf(
+            if (initialPictureItem != null) VideoPlayerMenuNavItem.Picture
+            else initialNav ?: VideoPlayerMenuNavItem.Picture
+        )
+    }
+    var focusState by remember {
+        mutableStateOf(if (initialPictureItem != null) MenuFocusState.Menu else MenuFocusState.MenuNav)
+    }
 
     Surface(
         modifier = modifier
@@ -162,6 +184,8 @@ fun MenuController(
             ) {
                 MenuList(
                     selectedNavMenu = selectedNavItem,
+                    pictureMenuFocusRequester = pictureMenuFocusRequester,
+                    initialPictureItem = initialPictureItem,
                     onResolutionChange = onResolutionChange,
                     onCodecChange = onCodecChange,
                     onPlaySpeedChange = onPlaySpeedChange,
@@ -205,6 +229,8 @@ fun MenuController(
 private fun MenuList(
     modifier: Modifier = Modifier,
     selectedNavMenu: VideoPlayerMenuNavItem,
+    pictureMenuFocusRequester: FocusRequester,
+    initialPictureItem: VideoPlayerPictureMenuItem?,
     onResolutionChange: (Resolution) -> Unit,
     onCodecChange: (VideoCodec) -> Unit,
     onAspectRatioChange: (VideoAspectRatio) -> Unit,
@@ -229,6 +255,8 @@ private fun MenuList(
         when (selectedNavMenu) {
             VideoPlayerMenuNavItem.Picture -> {
                 PictureMenuList(
+                    menuFocusRequester = pictureMenuFocusRequester,
+                    initialItem = initialPictureItem,
                     onResolutionChange = onResolutionChange,
                     onCodecChange = onCodecChange,
                     onAspectRatioChange = onAspectRatioChange,
