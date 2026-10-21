@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,6 +70,7 @@ fun MainScreen(
     var showUserPanel by remember { mutableStateOf(false) }
     var lastPressBack: Long by remember { mutableLongStateOf(0L) }
     var selectedDrawerItem by remember { mutableStateOf(DrawerItem.Home) }
+    var homeReloadKey by remember { mutableIntStateOf(0) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     val mainFocusRequester = remember { FocusRequester() }
@@ -126,6 +128,7 @@ fun MainScreen(
                     showUserPanel = true
                 },
                 onFocusToContent = onFocusToContent,
+                onReselect = { if (it == DrawerItem.Home) homeReloadKey++ },
                 onLogin = {
                     context.startActivity(Intent(context, LoginActivity::class.java))
                 }
@@ -151,7 +154,10 @@ fun MainScreen(
                 }
             ) { screen ->
                 when (screen) {
-                    DrawerItem.Home -> HomeContent(navFocusRequester = mainFocusRequester)
+                    DrawerItem.Home -> HomeContent(
+                        navFocusRequester = mainFocusRequester,
+                        reloadKey = homeReloadKey
+                    )
                     DrawerItem.UGC -> UgcContent(navFocusRequester = ugcFocusRequester)
                     DrawerItem.PGC -> PgcContent(navFocusRequester = pgcFocusRequester)
                     DrawerItem.Search -> SearchInputScreen(defaultFocusRequester = searchFocusRequester)

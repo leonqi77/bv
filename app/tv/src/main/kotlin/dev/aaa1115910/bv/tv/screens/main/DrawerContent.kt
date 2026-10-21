@@ -37,6 +37,7 @@ import androidx.tv.material3.DrawerValue
 import androidx.tv.material3.Icon
 import androidx.tv.material3.NavigationDrawer
 import androidx.tv.material3.NavigationDrawerItem
+import androidx.tv.material3.NavigationDrawerItemDefaults
 import androidx.tv.material3.NavigationDrawerScope
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
@@ -44,6 +45,7 @@ import androidx.tv.material3.Text
 import androidx.tv.material3.rememberDrawerState
 import coil.compose.AsyncImage
 import dev.aaa1115910.bv.ui.theme.BVTheme
+import dev.aaa1115910.bv.ui.theme.BvColors
 import dev.aaa1115910.bv.util.ifElse
 import dev.aaa1115910.bv.util.isDpadRight
 import dev.aaa1115910.bv.util.isKeyDown
@@ -59,7 +61,8 @@ fun NavigationDrawerScope.DrawerContent(
     onOpenSettings: () -> Unit = {},
     onShowUserPanel: () -> Unit = {},
     onFocusToContent: () -> Unit = {},
-    onLogin: () -> Unit = {}
+    onLogin: () -> Unit = {},
+    onReselect: (DrawerItem) -> Unit = {}
 ) {
     var selectedItem by remember { mutableStateOf(DrawerItem.Home) }
     val centerFocusRequester = remember { FocusRequester() }
@@ -153,7 +156,18 @@ fun NavigationDrawerScope.DrawerContent(
                                 item == DrawerItem.Home,
                                 Modifier.focusRequester(centerFocusRequester)
                             ),
-                        onClick = { selectedItem = item },
+                        onClick = {
+                            if (item == selectedItem) onReselect(item)
+                            selectedItem = item
+                        },
+                        colors = NavigationDrawerItemDefaults.colors(
+                            selectedContainerColor = BvColors.ChipFill,
+                            selectedContentColor = BvColors.Accent,
+                            focusedSelectedContainerColor = BvColors.ChipFill,
+                            focusedSelectedContentColor = BvColors.Accent,
+                            pressedSelectedContainerColor = BvColors.ChipFill,
+                            pressedSelectedContentColor = BvColors.Accent
+                        ),
                         selected = selectedItem == item,
                         leadingContent = {
                             Icon(
@@ -190,8 +204,8 @@ enum class DrawerItem(
     User(displayName = "点击登录", displayIcon = Icons.Default.AccountCircle),
     Search(displayName = "搜索", displayIcon = Icons.Default.Search),
     Home(displayName = "首页", displayIcon = Icons.Default.Home),
-    UGC(displayName = "UGC", displayIcon = Icons.Default.OndemandVideo),
-    PGC(displayName = "PGC", displayIcon = Icons.Default.Movie),
+    UGC(displayName = "分区", displayIcon = Icons.Default.OndemandVideo),
+    PGC(displayName = "番剧影视", displayIcon = Icons.Default.Movie),
     Settings(displayName = "设置", displayIcon = Icons.Default.Settings), ;
 }
 

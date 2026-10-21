@@ -45,6 +45,7 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeContent(
     modifier: Modifier = Modifier,
     navFocusRequester: FocusRequester,
+    reloadKey: Int = 0,
     recommendViewModel: RecommendViewModel = koinViewModel(),
     popularViewModel: PopularViewModel = koinViewModel(),
     dynamicViewModel: DynamicViewModel = koinViewModel(),
