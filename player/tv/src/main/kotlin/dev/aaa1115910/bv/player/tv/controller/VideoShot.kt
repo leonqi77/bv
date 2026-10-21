@@ -92,7 +92,7 @@ fun VideoShotImage(
 
     Image(
         modifier = modifier
-            .height(100.dp)
+            .height(200.dp)
             .shadow(4.dp, MaterialTheme.shapes.large)
             .clip(MaterialTheme.shapes.large)
             .drawBehind {

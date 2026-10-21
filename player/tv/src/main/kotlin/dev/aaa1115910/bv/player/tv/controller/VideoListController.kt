@@ -26,6 +26,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.ListItem
+import androidx.tv.material3.ListItemDefaults
+import dev.aaa1115910.bv.player.tv.PlayerColors
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
@@ -78,7 +80,7 @@ fun VideoListController(
             Surface(
                 modifier = modifier,
                 colors = SurfaceDefaults.colors(
-                    containerColor = Color.Black.copy(alpha = 0.5f)
+                    containerColor = PlayerColors.ScrimStrong
                 )
             ) {
                 Box(
@@ -112,7 +114,8 @@ fun VideoListController(
                                                 ?: "") + "P${video.index + 1} ${video.title}")
                                         },
                                         onClick = { if (!isSelected) onPlayNewVideo(video) },
-                                        selected = isSelected
+                                        selected = isSelected,
+                                        colors = playlistItemColors()
                                     )
                                 }
 
@@ -130,7 +133,8 @@ fun VideoListController(
                                         modifier = itemModifier,
                                         headlineContent = { Text(text = "EP${video.index + 1} ${video.title}") },
                                         onClick = { if (!isSelected) onPlayNewVideo(video) },
-                                        selected = isSelected
+                                        selected = isSelected,
+                                        colors = playlistItemColors()
                                     )
                                 }
 
@@ -148,7 +152,8 @@ fun VideoListController(
                                         modifier = itemModifier,
                                         headlineContent = { Text(text = video.title) },
                                         onClick = { if (!isSelected) onPlayNewVideo(video) },
-                                        selected = isSelected
+                                        selected = isSelected,
+                                        colors = playlistItemColors()
                                     )
                                 }
 
@@ -159,6 +164,7 @@ fun VideoListController(
                                             vertical = 12.dp
                                         ),
                                         text = "EP${video.index + 1} ${video.title}",
+                                        color = PlayerColors.TextSecondary,
                                         style = MaterialTheme.typography.titleMedium
                                     )
                                 }
@@ -170,3 +176,16 @@ fun VideoListController(
         }
     }
 }
+
+/** Dark rows; the focused row is light, the playing one carries the accent. */
+@Composable
+private fun playlistItemColors() = ListItemDefaults.colors(
+    containerColor = Color.Transparent,
+    contentColor = PlayerColors.TextPrimary,
+    focusedContainerColor = PlayerColors.TextPrimary,
+    focusedContentColor = PlayerColors.Background,
+    selectedContainerColor = Color.Transparent,
+    selectedContentColor = PlayerColors.Accent,
+    focusedSelectedContainerColor = PlayerColors.TextPrimary,
+    focusedSelectedContentColor = PlayerColors.Accent
+)

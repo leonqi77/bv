@@ -3,9 +3,15 @@ package dev.aaa1115910.bv.player.tv.controller
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,6 +22,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
+import dev.aaa1115910.bv.player.tv.PlayerColors
 import dev.aaa1115910.bv.player.entity.LocalVideoPlayerHistoryData
 import dev.aaa1115910.bv.player.entity.LocalVideoPlayerStateData
 import dev.aaa1115910.bv.util.formatHourMinSec
@@ -79,17 +86,29 @@ fun SkipTip(
                     .align(Alignment.BottomStart)
                     .padding(bottom = 32.dp),
                 colors = SurfaceDefaults.colors(
-                    containerColor = Color.Black.copy(alpha = 0.6f)
+                    containerColor = PlayerColors.ScrimStrong
                 ),
                 shape = MaterialTheme.shapes.medium.copy(
                     topStart = CornerSize(0.dp), bottomStart = CornerSize(0.dp)
                 )
             ) {
-                Text(
-                    modifier = Modifier.padding(8.dp),
-                    text = text,
-                    style = MaterialTheme.typography.titleLarge
-                )
+                Row(
+                    modifier = Modifier.height(IntrinsicSize.Min),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(3.dp)
+                            .fillMaxHeight()
+                            .background(PlayerColors.Accent)
+                    )
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = text,
+                        color = PlayerColors.TextPrimary,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
             }
         }
     }

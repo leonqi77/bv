@@ -54,6 +54,7 @@ import dev.aaa1115910.bv.player.entity.VideoListPart
 import dev.aaa1115910.bv.player.entity.VideoPlayerConfigData
 import dev.aaa1115910.bv.player.entity.VideoPlayerMenuNavItem
 import dev.aaa1115910.bv.player.entity.VideoPlayerPictureMenuItem
+import dev.aaa1115910.bv.player.tv.controller.playermenu.MenuPanelState
 import dev.aaa1115910.bv.player.seekbar.SeekMoveState
 import dev.aaa1115910.bv.player.shared.BuildConfig
 import dev.aaa1115910.bv.player.shared.R
@@ -122,6 +123,7 @@ fun VideoPlayerController(
 
     var controls by remember { mutableStateOf(ControlsState()) }
     var lastKeyAt by remember { mutableLongStateOf(0L) }
+    val menuPanelState = remember { MenuPanelState() }
     var menuNav by remember { mutableStateOf<VideoPlayerMenuNavItem?>(null) }
     var menuPictureItem by remember { mutableStateOf<VideoPlayerPictureMenuItem?>(null) }
 
@@ -293,6 +295,15 @@ fun VideoPlayerController(
 
                 if (showClickableControllers) {
                     if (listOf(Key.Back, Key.Menu).contains(it.key)) {
+                        // Back inside the settings panel steps up one level before the panel closes.
+                        if (it.key == Key.Back && showMenuController) {
+                            if (it.type == KeyEventType.KeyUp && !menuPanelState.back()) {
+                                logger.fInfo { "[${it.key}] hide all controllers" }
+                                showMenuController = false
+                            }
+                            onRequestFocus()
+                            return@onPreviewKeyEvent true
+                        }
                         if (it.type == KeyEventType.KeyUp) {
                             logger.fInfo { "[${it.key}] hide all controllers" }
                             showMenuController = false
@@ -507,6 +518,7 @@ fun VideoPlayerController(
         )
         MenuController(
             show = showMenuController,
+            state = menuPanelState,
             initialNav = menuNav,
             initialPictureItem = menuPictureItem,
             onResolutionChange = onResolutionChange,
