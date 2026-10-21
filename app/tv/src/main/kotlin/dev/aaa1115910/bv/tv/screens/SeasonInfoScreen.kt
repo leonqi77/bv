@@ -47,6 +47,7 @@ import dev.aaa1115910.bv.tv.screens.season.SeasonEpisodeRow
 import dev.aaa1115910.bv.tv.screens.season.SeasonHero
 import dev.aaa1115910.bv.tv.screens.season.SeasonPosterRow
 import dev.aaa1115910.bv.tv.screens.season.SeasonRowCardTop
+import dev.aaa1115910.bv.tv.screens.season.playerTitle
 import dev.aaa1115910.bv.tv.util.launchPlayerActivity
 import dev.aaa1115910.bv.ui.theme.BvColors
 import dev.aaa1115910.bv.util.fInfo
@@ -249,7 +250,7 @@ fun SeasonInfoScreen(
                 playEpisode.aid,
                 playEpisode.cid,
                 playEpisode.id,
-                progress?.lastEpIndex ?: playEpisode.longTitle,
+                playEpisode.playerTitle(),
                 progress?.lastTime ?: 0
             )
             videoInfoRepository.videoList.clear()
@@ -385,9 +386,7 @@ private fun List<Episode>.toVideoList(seasonId: Int?) = mapIndexed { index, epis
         cid = episode.cid,
         epid = episode.id,
         seasonId = seasonId,
-        title = runCatching {
-            "第 ${episode.title.toInt()} 集"
-        }.getOrDefault(episode.title) + " " + episode.longTitle,
+        title = episode.playerTitle(),
         index = index,
     )
 }
