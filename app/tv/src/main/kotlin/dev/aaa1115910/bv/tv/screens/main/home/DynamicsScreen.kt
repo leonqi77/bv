@@ -24,6 +24,8 @@ import androidx.tv.material3.Text
 import dev.aaa1115910.biliapi.entity.user.DynamicVideo
 import dev.aaa1115910.bv.tv.component.LoadingTip
 import dev.aaa1115910.bv.entity.carddata.VideoCardData
+import dev.aaa1115910.bv.entity.carddata.toPubTimeOrNull
+import dev.aaa1115910.bv.entity.carddata.takeIfKnownCount
 import dev.aaa1115910.bv.entity.proxy.ProxyArea
 import dev.aaa1115910.bv.tv.activities.video.VideoInfoActivity
 import dev.aaa1115910.bv.tv.component.videocard.SmallVideoCard
@@ -83,11 +85,11 @@ fun DynamicsScreen(
                             avid = item.aid,
                             title = item.title,
                             cover = item.cover,
-                            play = with(item.play) { if (this == -1) null else this },
-                            danmaku = with(item.danmaku) { if (this == -1) null else this },
+                            play = item.play.takeIfKnownCount(),
+                            danmaku = item.danmaku.takeIfKnownCount(),
                             upName = item.author,
                             time = item.duration * 1000L,
-                            pubTime = item.time.takeIf { it > 0 }?.toInt(),
+                            pubTime = item.time.toPubTimeOrNull(),
                             upFace = item.avatar
                         ),
                         onClick = { onClickVideo(item) },

@@ -29,4 +29,18 @@ class VideoCardDataTest {
         assertEquals("影视飓风", card("影视飓风", null, null).meta())
         assertEquals("103万播放", card("", 1035185, 0).meta())
     }
+
+    @Test
+    fun knownCount() {
+        assertEquals(null, (-1).takeIfKnownCount())
+        assertEquals(0, 0.takeIfKnownCount())
+        assertEquals(5, 5.takeIfKnownCount())
+    }
+
+    @Test
+    fun pubTime() {
+        assertEquals(null, 0L.toPubTimeOrNull())
+        assertEquals(1700000000, 1700000000L.toPubTimeOrNull())
+        assertEquals(null, 0.toPubTimeOrNull())
+    }
 }

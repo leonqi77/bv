@@ -48,3 +48,12 @@ fun VideoCardData.metaLine(
     val playText = if (playString.isNotBlank()) "${playString}播放" else ""
     return listOf(upName, playText, timeText).filter { it.isNotBlank() }.joinToString(" · ")
 }
+
+/** 未知计数（接口返回 -1）转为 null，避免卡片显示 "-1播放"。 */
+fun Int.takeIfKnownCount(): Int? = takeIf { it >= 0 }
+
+/** 发布时间戳（秒）转为 [VideoCardData.pubTime]，未知（<=0）返回 null。 */
+fun Long.toPubTimeOrNull(): Int? = takeIf { it > 0 }?.toInt()
+
+/** [Int] 版本，用于接口直接返回 Int 秒的场景。 */
+fun Int.toPubTimeOrNull(): Int? = toLong().toPubTimeOrNull()

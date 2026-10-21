@@ -74,6 +74,7 @@ import dev.aaa1115910.bv.BuildConfig
 import dev.aaa1115910.bv.R
 import dev.aaa1115910.bv.entity.carddata.SeasonCardData
 import dev.aaa1115910.bv.entity.carddata.VideoCardData
+import dev.aaa1115910.bv.entity.carddata.toPubTimeOrNull
 import dev.aaa1115910.bv.entity.proxy.ProxyArea
 import dev.aaa1115910.bv.tv.activities.user.FavoriteActivity
 import dev.aaa1115910.bv.tv.activities.user.FollowActivity
@@ -240,7 +241,7 @@ fun UserInfoScreen(
                             cover = favoriteItem.cover,
                             upName = favoriteItem.upper.name,
                             time = favoriteItem.duration.toLong() * 1000,
-                            pubTime = favoriteItem.pubtime.takeIf { it > 0 }?.toInt(),
+                            pubTime = favoriteItem.pubtime.toPubTimeOrNull(),
                             upFace = favoriteItem.upper.face
                         )
                     )

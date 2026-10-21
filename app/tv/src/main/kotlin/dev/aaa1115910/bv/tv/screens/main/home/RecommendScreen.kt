@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import dev.aaa1115910.biliapi.entity.ugc.UgcItem
 import dev.aaa1115910.bv.tv.component.LoadingTip
 import dev.aaa1115910.bv.entity.carddata.VideoCardData
+import dev.aaa1115910.bv.entity.carddata.toPubTimeOrNull
+import dev.aaa1115910.bv.entity.carddata.takeIfKnownCount
 import dev.aaa1115910.bv.tv.activities.video.VideoInfoActivity
 import dev.aaa1115910.bv.tv.component.videocard.SmallVideoCard
 import dev.aaa1115910.bv.tv.screens.main.ugc.gridItems
@@ -75,11 +77,11 @@ fun RecommendScreen(
                         avid = item.aid,
                         title = item.title,
                         cover = item.cover,
-                        play = with(item.play) { if (this == -1) null else this },
-                        danmaku = with(item.danmaku) { if (this == -1) null else this },
+                        play = item.play.takeIfKnownCount(),
+                        danmaku = item.danmaku.takeIfKnownCount(),
                         upName = item.author,
                         time = item.duration * 1000L,
-                        pubTime = item.pubDate.takeIf { it > 0 }?.toInt(),
+                        pubTime = item.pubDate.toPubTimeOrNull(),
                         upFace = item.authorFace
                     ),
                     onClick = { onClickVideo(item) },

@@ -35,6 +35,8 @@ import dev.aaa1115910.biliapi.entity.ugc.UgcTypeV2
 import dev.aaa1115910.biliapi.entity.ugc.region.UgcFeedPage
 import dev.aaa1115910.biliapi.repositories.UgcRepository
 import dev.aaa1115910.bv.entity.carddata.VideoCardData
+import dev.aaa1115910.bv.entity.carddata.toPubTimeOrNull
+import dev.aaa1115910.bv.entity.carddata.takeIfKnownCount
 import dev.aaa1115910.bv.tv.activities.video.VideoInfoActivity
 import dev.aaa1115910.bv.tv.component.UgcCarousel
 import dev.aaa1115910.bv.tv.component.videocard.SmallVideoCard
@@ -122,11 +124,11 @@ fun UgcRegionScaffold(
                         avid = item.aid,
                         title = item.title,
                         cover = item.cover,
-                        play = with(item.play) { if (this == -1) null else this },
-                        danmaku = with(item.danmaku) { if (this == -1) null else this },
+                        play = item.play.takeIfKnownCount(),
+                        danmaku = item.danmaku.takeIfKnownCount(),
                         upName = item.author,
                         time = item.duration * 1000L,
-                        pubTime = item.pubDate.takeIf { it > 0 }?.toInt(),
+                        pubTime = item.pubDate.toPubTimeOrNull(),
                         upFace = item.authorFace
                     ),
                     onClick = { VideoInfoActivity.actionStart(context, item.aid) },
