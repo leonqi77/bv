@@ -2,7 +2,7 @@ package dev.aaa1115910.bv.entity.carddata
 
 import dev.aaa1115910.bv.util.formatHourMinSec
 import dev.aaa1115910.bv.util.formatRelativeTime
-import java.time.ZoneId
+import java.util.TimeZone
 
 data class VideoCardData(
     val avid: Long,
@@ -42,9 +42,9 @@ data class VideoCardData(
 /** 卡片信息行：UP 主 · 播放量 · 发布时间，空项会被跳过。 */
 fun VideoCardData.metaLine(
     nowMillis: Long = System.currentTimeMillis(),
-    zone: ZoneId = ZoneId.systemDefault()
+    timeZone: TimeZone = TimeZone.getDefault()
 ): String {
-    val timeText = pubTime?.let { formatRelativeTime(it.toLong(), nowMillis, zone) } ?: ""
+    val timeText = pubTime?.let { formatRelativeTime(it.toLong(), nowMillis, timeZone) } ?: ""
     val playText = if (playString.isNotBlank()) "${playString}播放" else ""
     return listOf(upName, playText, timeText).filter { it.isNotBlank() }.joinToString(" · ")
 }
