@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
+import dev.aaa1115910.bv.player.tv.PlayerColors
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
 import androidx.tv.material3.darkColorScheme
@@ -91,7 +92,7 @@ fun PauseIcon(
     Surface(
         modifier = modifier,
         colors = SurfaceDefaults.colors(
-            containerColor = Color.Black.copy(0.5f)
+            containerColor = PlayerColors.ScrimStrong
         ),
         shape = MaterialTheme.shapes.medium
     ) {
@@ -101,7 +102,7 @@ fun PauseIcon(
                 .size(50.dp),
             imageVector = Icons.Rounded.Pause,
             contentDescription = null,
-            tint = Color.White
+            tint = PlayerColors.Accent
         )
     }
 }
@@ -125,7 +126,7 @@ fun PlayErrorTip(
     Surface(
         modifier = modifier,
         colors = SurfaceDefaults.colors(
-            containerColor = Color.Black.copy(0.5f)
+            containerColor = PlayerColors.ScrimStrong
         ),
         shape = MaterialTheme.shapes.medium
     ) {
@@ -171,7 +172,7 @@ fun PaidRequireTip(
     Surface(
         modifier = modifier,
         colors = SurfaceDefaults.colors(
-            containerColor = Color.Black.copy(0.5f)
+            containerColor = PlayerColors.ScrimStrong
         ),
         shape = MaterialTheme.shapes.medium
     ) {
