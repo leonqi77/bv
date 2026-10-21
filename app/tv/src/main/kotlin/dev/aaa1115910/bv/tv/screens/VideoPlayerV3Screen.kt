@@ -55,6 +55,9 @@ fun VideoPlayerV3Screen(
             codec = playerViewModel.currentVideoCodec.name,
             title = playerViewModel.title,
             partTitle = playerViewModel.partTitle,
+            upName = playerViewModel.upName,
+            upFace = playerViewModel.upFace,
+            upFollowed = playerViewModel.upFollowed,
         ),
         LocalVideoPlayerLogsData provides VideoPlayerLogsData(
             logs = playerViewModel.logs

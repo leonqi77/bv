@@ -393,7 +393,10 @@ fun VideoInfoScreen(
                             playerIconIdle = videoDetailViewModel.videoDetail!!.playerIcon?.idle
                                 ?: "",
                             playerIconMoving = videoDetailViewModel.videoDetail!!.playerIcon?.moving
-                                ?: ""
+                                ?: "",
+                            upName = videoDetailViewModel.videoDetail!!.author.name,
+                            upFace = videoDetailViewModel.videoDetail!!.author.face,
+                            upFollowed = isFollowing
                         )
                         context.finish()
                     }
@@ -594,7 +597,10 @@ fun VideoInfoScreen(
                                     playerIconIdle = videoDetailViewModel.videoDetail!!.playerIcon?.idle
                                         ?: "",
                                     playerIconMoving = videoDetailViewModel.videoDetail!!.playerIcon?.moving
-                                        ?: ""
+                                        ?: "",
+                                    upName = videoDetailViewModel.videoDetail!!.author.name,
+                                    upFace = videoDetailViewModel.videoDetail!!.author.face,
+                                    upFollowed = isFollowing
                                 )
                             },
                             onClickUp = {
@@ -662,7 +668,10 @@ fun VideoInfoScreen(
                                         playerIconIdle = videoDetailViewModel.videoDetail!!.playerIcon?.idle
                                             ?: "",
                                         playerIconMoving = videoDetailViewModel.videoDetail!!.playerIcon?.moving
-                                            ?: ""
+                                            ?: "",
+                                        upName = videoDetailViewModel.videoDetail!!.author.name,
+                                        upFace = videoDetailViewModel.videoDetail!!.author.face,
+                                        upFollowed = isFollowing
                                     )
                                 }
                             )
@@ -690,7 +699,10 @@ fun VideoInfoScreen(
                                         playerIconIdle = videoDetailViewModel.videoDetail!!.playerIcon?.idle
                                             ?: "",
                                         playerIconMoving = videoDetailViewModel.videoDetail!!.playerIcon?.moving
-                                            ?: ""
+                                            ?: "",
+                                        upName = videoDetailViewModel.videoDetail!!.author.name,
+                                        upFace = videoDetailViewModel.videoDetail!!.author.face,
+                                        upFollowed = isFollowing
                                     )
                                 },
                                 onClickEpPart = { episode, cid ->
@@ -707,7 +719,10 @@ fun VideoInfoScreen(
                                         playerIconIdle = videoDetailViewModel.videoDetail!!.playerIcon?.idle
                                             ?: "",
                                         playerIconMoving = videoDetailViewModel.videoDetail!!.playerIcon?.moving
-                                            ?: ""
+                                            ?: "",
+                                        upName = videoDetailViewModel.videoDetail!!.author.name,
+                                        upFace = videoDetailViewModel.videoDetail!!.author.face,
+                                        upFollowed = isFollowing
                                     )
                                 }
                             )
