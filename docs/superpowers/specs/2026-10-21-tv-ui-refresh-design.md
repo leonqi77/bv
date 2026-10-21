@@ -63,7 +63,7 @@ YouTube is the reference because Bilibili, like YouTube, is built around creator
 
 ### Side menu (`DrawerContent.kt`)
 
-Same items and order. Labels change: UGC → **分区**, PGC → **番剧影视**.
+Same items and order. Labels change: UGC → **分区**, PGC → **影视**, logged-out user item `点击登录` → **登录** (logged in still shows the username, ellipsized on one line). The expanded side menu is narrowed (about 160dp instead of the library default of about a third of the screen) to fit the two-character labels.
 
 It stays collapsed to icons until focused, as it does now. When expanded, the selected item uses the pink accent instead of the large light pill.
 
@@ -101,7 +101,7 @@ Pressing ↓ moves to the next row. The header stays at the top and the rows mov
   - Under the title: `UP名 · N万播放 · 时间`.
 - Focus as described in Look and feel.
 
-### Category pages (分区, 番剧影视: `UgcContent.kt`, `PgcContent.kt` and sub-screens)
+### Category pages (分区, 影视: `UgcContent.kt`, `PgcContent.kt` and sub-screens)
 
 Same structure (category chips, banner carousel, sub-category chips, grids). They get the new cards, chip styling, colors and focus treatment. Show posters (`SeasonCard.kt`) get the same focus treatment and rounded corners, and keep their score badge.
 
@@ -179,7 +179,7 @@ Key mapping stays the same (OK play/pause, ←/→ seek, ↑ playlist, Menu sett
 ## Decided by the owner
 
 - Home direction: featured header + rows (option C of three mockups).
-- Side menu renamed to 分区 / 番剧影视.
+- Side menu renamed to 分区 / 影视, `点击登录` → `登录`, and the expanded side menu narrowed to fit the two-character labels.
 - Show page: Netflix-style, as in the mockup.
 - Player controls included, as in the mockup, including ↓ opening the controls layer. While it is open, keys follow the YouTube model (progress bar first, ↓ to buttons, Back hides the layer).
 - YouTube is the main reference, because BV is creator-centric.

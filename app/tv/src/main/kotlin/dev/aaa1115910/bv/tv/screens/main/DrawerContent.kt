@@ -1,11 +1,15 @@
 package dev.aaa1115910.bv.tv.screens.main
 
-import androidx.compose.foundation.basicMarquee
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -32,11 +36,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.DrawerValue
 import androidx.tv.material3.Icon
+import androidx.tv.material3.ListItem
+import androidx.tv.material3.ListItemColors
+import androidx.tv.material3.ListItemDefaults
 import androidx.tv.material3.NavigationDrawer
-import androidx.tv.material3.NavigationDrawerItem
 import androidx.tv.material3.NavigationDrawerItemDefaults
 import androidx.tv.material3.NavigationDrawerScope
 import androidx.tv.material3.Surface
@@ -50,6 +57,60 @@ import dev.aaa1115910.bv.util.ifElse
 import dev.aaa1115910.bv.util.isDpadRight
 import dev.aaa1115910.bv.util.isKeyDown
 import kotlinx.coroutines.delay
+
+/**
+ * Expanded item width: icon plus a two-character label. With the 12dp drawer padding on each side
+ * the expanded side menu is 160dp wide. The collapsed rail keeps the library width.
+ */
+private val ExpandedDrawerItemWidth = 136.dp
+
+/**
+ * Same as [NavigationDrawerItem], but with a narrower expanded width. The library item hardcodes
+ * its width (262dp) inside a layout modifier, so it cannot be narrowed from outside.
+ */
+@Composable
+private fun NavigationDrawerScope.DrawerNavItem(
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    colors: ListItemColors = ListItemDefaults.colors(),
+    leadingContent: @Composable BoxScope.() -> Unit,
+    content: @Composable () -> Unit
+) {
+    val width by animateDpAsState(
+        targetValue = if (hasFocus) ExpandedDrawerItemWidth
+        else NavigationDrawerItemDefaults.CollapsedDrawerItemWidth,
+        label = "drawer item width"
+    )
+    ListItem(
+        selected = selected,
+        onClick = onClick,
+        modifier = modifier.width(width),
+        headlineContent = {
+            AnimatedVisibility(
+                visible = hasFocus,
+                enter = NavigationDrawerItemDefaults.ContentAnimationEnter,
+                exit = NavigationDrawerItemDefaults.ContentAnimationExit
+            ) {
+                content()
+            }
+        },
+        leadingContent = {
+            Box(modifier = Modifier.size(NavigationDrawerItemDefaults.IconSize)) {
+                leadingContent()
+            }
+        },
+        shape = ListItemDefaults.shape(
+            shape = CircleShape,
+            focusedShape = CircleShape,
+            pressedShape = CircleShape,
+            selectedShape = CircleShape,
+            focusedSelectedShape = CircleShape,
+            pressedSelectedShape = CircleShape
+        ),
+        colors = colors
+    )
+}
 
 @Composable
 fun NavigationDrawerScope.DrawerContent(
@@ -94,7 +155,7 @@ fun NavigationDrawerScope.DrawerContent(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
 
-        NavigationDrawerItem(
+        DrawerNavItem(
             modifier = Modifier,
             onClick = {
                 if (isLogin) {
@@ -132,11 +193,10 @@ fun NavigationDrawerScope.DrawerContent(
             }
         ) {
             Text(
-                modifier = Modifier
-                    .basicMarquee(),
                 text = if (isLogin) username
                 else DrawerItem.User.displayName,
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
         LazyColumn(
@@ -152,7 +212,7 @@ fun NavigationDrawerScope.DrawerContent(
                 DrawerItem.PGC,
             ).forEach { item ->
                 item {
-                    NavigationDrawerItem(
+                    DrawerNavItem(
                         modifier = Modifier
                             .onFocusChanged { if (it.hasFocus) selectedItem = item }
                             .ifElse(
@@ -163,7 +223,7 @@ fun NavigationDrawerScope.DrawerContent(
                             if (item == selectedItem) onReselect(item)
                             selectedItem = item
                         },
-                        colors = NavigationDrawerItemDefaults.colors(
+                        colors = ListItemDefaults.colors(
                             selectedContainerColor = BvColors.ChipFill,
                             selectedContentColor = BvColors.Accent,
                             focusedSelectedContainerColor = BvColors.ChipFill,
@@ -184,7 +244,7 @@ fun NavigationDrawerScope.DrawerContent(
                 }
             }
         }
-        NavigationDrawerItem(
+        DrawerNavItem(
             modifier = Modifier,
             onClick = onOpenSettings,
             selected = false,
@@ -204,11 +264,11 @@ enum class DrawerItem(
     val displayName: String,
     val displayIcon: ImageVector
 ) {
-    User(displayName = "点击登录", displayIcon = Icons.Default.AccountCircle),
+    User(displayName = "登录", displayIcon = Icons.Default.AccountCircle),
     Search(displayName = "搜索", displayIcon = Icons.Default.Search),
     Home(displayName = "首页", displayIcon = Icons.Default.Home),
     UGC(displayName = "分区", displayIcon = Icons.Default.OndemandVideo),
-    PGC(displayName = "番剧影视", displayIcon = Icons.Default.Movie),
+    PGC(displayName = "影视", displayIcon = Icons.Default.Movie),
     Settings(displayName = "设置", displayIcon = Icons.Default.Settings), ;
 }
 
