@@ -4,7 +4,9 @@ import android.content.Context
 import dev.aaa1115910.bv.entity.proxy.ProxyArea
 import dev.aaa1115910.bv.tv.activities.video.RemoteControllerPanelDemoActivity
 import dev.aaa1115910.bv.tv.activities.video.VideoPlayerV3Activity
+import dev.aaa1115910.bv.util.ImageSize
 import dev.aaa1115910.bv.util.Prefs
+import dev.aaa1115910.bv.util.resizedImageUrl
 
 fun launchPlayerActivity(
     context: Context,
@@ -25,17 +27,19 @@ fun launchPlayerActivity(
     upFace: String = "",
     upFollowed: Boolean = false
 ) {
+    // The player shows the face at avatar size: use the same resized URL the cards cache.
+    val avatarUrl = upFace.takeIf { it.isNotEmpty() }?.resizedImageUrl(ImageSize.Avatar).orEmpty()
     if (Prefs.showedRemoteControllerPanelDemo) {
         VideoPlayerV3Activity.actionStart(
             context, avid, cid, title, partTitle, played, fromSeason, subType, epid, seasonId,
             isVerticalVideo, proxyArea, playerIconIdle, playerIconMoving,
-            upName, upFace, upFollowed
+            upName, avatarUrl, upFollowed
         )
     } else {
         RemoteControllerPanelDemoActivity.actionStart(
             context, avid, cid, title, partTitle, played, fromSeason, subType, epid, seasonId,
             isVerticalVideo, proxyArea, playerIconIdle, playerIconMoving,
-            upName, upFace, upFollowed
+            upName, avatarUrl, upFollowed
         )
     }
 }

@@ -76,15 +76,15 @@ private val labels = mapOf(
  *
  * @param activeButtons buttons whose value is shown in the accent (an "on" switch).
  * @param disabledButtons buttons drawn dimmed because they would do nothing.
+ * @param progress read only by the progress bar and the time row, so a position tick
+ *   recomposes just those and not the header or the buttons.
  * @param seekPreview the preview thumbnails, passed only while a seek is in progress.
  */
 @Composable
 fun ControlsLayer(
     state: ControlsState,
     header: PlayerHeader,
-    positionMs: Long,
-    durationMs: Long,
-    bufferedMs: Long,
+    progress: () -> PlaybackProgress,
     isPlaying: Boolean,
     buttonValues: Map<ControlButtonId, String>,
     clock: String,
@@ -150,29 +150,11 @@ fun ControlsLayer(
                     .fillMaxWidth()
                     .padding(start = SideInset, end = SideInset, bottom = BottomInset)
             ) {
-                if (seekPreview != null) {
-                    VideoShot(
-                        modifier = Modifier.padding(bottom = 10.dp),
-                        videoShot = seekPreview,
-                        position = positionMs,
-                        duration = durationMs
-                    )
-                }
-                ProgressBar(
-                    played = fraction(positionMs, durationMs),
-                    buffered = fraction(bufferedMs, durationMs),
-                    focused = state.focus == ControlsFocus.ProgressBar
+                ProgressSection(
+                    progress = progress,
+                    focused = state.focus == ControlsFocus.ProgressBar,
+                    seekPreview = seekPreview
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 7.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    val timeStyle = TextStyle(color = Color(0xFFDDDDDD), fontSize = 10.sp)
-                    Text(text = positionMs.formatHourMinSec(), style = timeStyle)
-                    Text(text = durationMs.formatHourMinSec(), style = timeStyle)
-                }
                 ButtonRow(
                     modifier = Modifier.padding(top = 10.dp),
                     focusedIndex = state.buttonIndex.takeIf { state.focus == ControlsFocus.Buttons },
@@ -192,6 +174,43 @@ fun ControlsLayer(
                     style = TextStyle(color = Color(0x88FFFFFF), fontSize = 8.sp)
                 )
             }
+        }
+    }
+}
+
+/** Position, duration and buffered end of the playback, in milliseconds. */
+data class PlaybackProgress(val positionMs: Long, val durationMs: Long, val bufferedMs: Long)
+
+@Composable
+private fun ProgressSection(
+    progress: () -> PlaybackProgress,
+    focused: Boolean,
+    seekPreview: VideoShot?
+) {
+    val (positionMs, durationMs, bufferedMs) = progress()
+    Column {
+        if (seekPreview != null) {
+            VideoShot(
+                modifier = Modifier.padding(bottom = 10.dp),
+                videoShot = seekPreview,
+                position = positionMs,
+                duration = durationMs
+            )
+        }
+        ProgressBar(
+            played = fraction(positionMs, durationMs),
+            buffered = fraction(bufferedMs, durationMs),
+            focused = focused
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 7.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            val timeStyle = TextStyle(color = Color(0xFFDDDDDD), fontSize = 10.sp)
+            Text(text = positionMs.formatHourMinSec(), style = timeStyle)
+            Text(text = durationMs.formatHourMinSec(), style = timeStyle)
         }
     }
 }
