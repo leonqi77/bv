@@ -27,6 +27,9 @@ data class VideoPlayerVideoInfoData(
     val codec: String = "",
     val title: String = "Title",
     val partTitle: String = "PartTitle",
+    val upName: String = "",
+    val upFace: String = "",
+    val upFollowed: Boolean = false,
 )
 
 data class VideoPlayerClockData(
