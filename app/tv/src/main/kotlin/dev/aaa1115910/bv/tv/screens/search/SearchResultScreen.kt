@@ -310,7 +310,8 @@ private fun SearchResultListItem(
                     title = searchResult.title.removeHtmlTags(),
                     cover = searchResult.cover,
                     upName = searchResult.author,
-                    time = searchResult.duration * 1000L
+                    time = searchResult.duration * 1000L,
+                    pubTime = searchResult.pubDate.takeIf { it > 0 }
                 ),
                 onClick = onClick,
                 onLongClick = onLongClick,

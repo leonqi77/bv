@@ -1,31 +1,23 @@
 package dev.aaa1115910.bv.tv.component.videocard
 
 import android.content.res.Configuration
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,25 +26,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
-import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
-import dev.aaa1115910.bv.R
-import dev.aaa1115910.bv.tv.component.UpIcon
 import dev.aaa1115910.bv.entity.carddata.VideoCardData
+import dev.aaa1115910.bv.entity.carddata.metaLine
+import dev.aaa1115910.bv.tv.component.BvCardDefaults
+import dev.aaa1115910.bv.tv.component.UpIcon
 import dev.aaa1115910.bv.ui.theme.BVTheme
+import dev.aaa1115910.bv.ui.theme.BvColors
 import dev.aaa1115910.bv.util.ImageSize
 import dev.aaa1115910.bv.util.resizedImageUrl
 
@@ -95,17 +85,6 @@ fun SmallVideoCardContent(
     onLongClick: () -> Unit = {},
     onFocusChanged: (Boolean) -> Unit = {}
 ) {
-    /*val infoScale by animateFloatAsState(
-        targetValue = if (hasFocus) 1.05f else 1f,
-        animationSpec = spring(),
-        label = "info scale"
-    )*/
-    val infoOffsetY by animateDpAsState(
-        targetValue = if (hasFocus) 8.dp else 0.dp,
-        animationSpec = spring(),
-        label = "info offset y"
-    )
-
     Column(
         modifier = modifier
     ) {
@@ -117,111 +96,23 @@ fun SmallVideoCardContent(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 pressedContainerColor = MaterialTheme.colorScheme.surface
             ),
-            shape = CardDefaults.shape(shape = MaterialTheme.shapes.large),
-            border = CardDefaults.border(
-                focusedBorder = Border(
-                    border = BorderStroke(width = 3.dp, color = MaterialTheme.colorScheme.border),
-                    shape = MaterialTheme.shapes.large
-                )
-            )
+            shape = CardDefaults.shape(shape = MaterialTheme.shapes.medium),
+            scale = BvCardDefaults.scale(),
+            border = BvCardDefaults.border(),
+            glow = BvCardDefaults.glow()
         ) {
             CardCover(
                 cover = data.cover,
-                play = data.playString,
-                danmaku = data.danmakuString,
                 time = data.timeString,
                 is4K = data.is4K
             )
         }
 
         CardInfo(
-            modifier = Modifier
-                //.scale(infoScale)
-                .offset(y = infoOffsetY),
+            modifier = Modifier.padding(top = 8.dp),
             title = data.title,
-            upName = data.upName
-        )
-    }
-}
-
-@Composable
-private fun PlayText(
-    modifier: Modifier = Modifier,
-    text: String
-) {
-    if (text.isNotBlank()) {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Icon(
-                modifier = Modifier,
-                painter = painterResource(id = R.drawable.ic_play_count),
-                contentDescription = null,
-                tint = Color.White
-            )
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White
-            )
-        }
-    }
-}
-
-@Composable
-private fun DanmakuText(
-    modifier: Modifier = Modifier,
-    text: String
-) {
-    if (text.isNotBlank()) {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Icon(
-                modifier = Modifier,
-                painter = painterResource(id = R.drawable.ic_danmaku_count),
-                contentDescription = null,
-                tint = Color.White
-            )
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White
-            )
-        }
-    }
-}
-
-@Composable
-private fun CoverBottomInfo(
-    modifier: Modifier = Modifier,
-    play: String,
-    danmaku: String,
-    time: String
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(12.dp, 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            PlayText(text = play)
-            DanmakuText(text = danmaku)
-        }
-        Text(
-            text = time,
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.White,
-            maxLines = 1
+            upFace = data.upFace,
+            meta = data.metaLine()
         )
     }
 }
@@ -230,58 +121,20 @@ private fun CoverBottomInfo(
 fun CardCover(
     modifier: Modifier = Modifier,
     cover: String,
-    play: String,
-    danmaku: String,
     time: String,
     is4K: Boolean = false
 ) {
-    var width by remember { mutableStateOf(200.dp) }
-    val showInfo by remember { derivedStateOf { width > 160.dp } }
-
-    BoxWithConstraints(
-        modifier = modifier.clip(MaterialTheme.shapes.large),
-        contentAlignment = Alignment.BottomCenter
+    Box(
+        modifier = modifier.clip(MaterialTheme.shapes.medium)
     ) {
-        val boxWithConstraintsScope = this
-        width = boxWithConstraintsScope.maxWidth
-        val shadowAlpha by animateFloatAsState(
-            targetValue = if (showInfo) 0.8f else 0f,
-            label = "shadow alpha"
-        )
-
         AsyncImage(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1.6f)
-                .clip(MaterialTheme.shapes.large),
+                .aspectRatio(16f / 9f),
             model = cover.resizedImageUrl(ImageSize.SmallVideoCardCover),
             contentDescription = null,
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.Crop
         )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            Color.Black.copy(alpha = shadowAlpha)
-                        )
-                    )
-                )
-        )
-        AnimatedVisibility(
-            visible = showInfo,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            CoverBottomInfo(
-                play = play,
-                danmaku = danmaku,
-                time = time
-            )
-        }
         if (is4K) {
             Text(
                 modifier = Modifier
@@ -294,6 +147,19 @@ fun CardCover(
                 color = Color.White
             )
         }
+        if (time.isNotBlank()) {
+            Text(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(6.dp)
+                    .background(Color.Black.copy(alpha = 0.75f), RoundedCornerShape(4.dp))
+                    .padding(horizontal = 4.dp, vertical = 1.dp),
+                text = time,
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White,
+                maxLines = 1
+            )
+        }
     }
 }
 
@@ -301,28 +167,43 @@ fun CardCover(
 private fun CardInfo(
     modifier: Modifier = Modifier,
     title: String,
-    upName: String
+    upFace: String,
+    meta: String
 ) {
-    Column(
-        modifier = modifier.padding(8.dp)
+    Row(
+        modifier = modifier.padding(horizontal = 2.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            UpIcon()
+        if (upFace.isNotBlank()) {
+            AsyncImage(
+                modifier = Modifier
+                    .size(22.dp)
+                    .clip(CircleShape),
+                model = upFace.resizedImageUrl(ImageSize.Avatar),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            UpIcon(color = BvColors.TextSecondary)
+        }
+        Column {
             Text(
-                text = upName,
-                style = MaterialTheme.typography.labelMedium,
-                maxLines = 1,
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                color = BvColors.TextPrimary,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
+            if (meta.isNotBlank()) {
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = meta,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = BvColors.TextSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
@@ -408,21 +289,5 @@ fun SmallVideoCardsPreview() {
                 }
             }
         }
-    }
-}
-
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun DanmakuTextPreview() {
-    BVTheme {
-        DanmakuText(text = "233")
-    }
-}
-
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun PlayTextPreview() {
-    BVTheme {
-        PlayText(text = "233")
     }
 }

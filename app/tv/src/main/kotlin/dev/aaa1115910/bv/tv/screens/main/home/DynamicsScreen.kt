@@ -83,10 +83,12 @@ fun DynamicsScreen(
                             avid = item.aid,
                             title = item.title,
                             cover = item.cover,
-                            play = item.play,
-                            danmaku = item.danmaku,
+                            play = with(item.play) { if (this == -1) null else this },
+                            danmaku = with(item.danmaku) { if (this == -1) null else this },
                             upName = item.author,
-                            time = item.duration * 1000L
+                            time = item.duration * 1000L,
+                            pubTime = item.time.takeIf { it > 0 }?.toInt(),
+                            upFace = item.avatar
                         ),
                         onClick = { onClickVideo(item) },
                         onFocus = { currentFocusedIndex = index }

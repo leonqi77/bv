@@ -1,7 +1,6 @@
 package dev.aaa1115910.bv.tv.component.videocard
 
 import android.content.res.Configuration
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,13 +33,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import dev.aaa1115910.bv.entity.carddata.SeasonCardData
+import dev.aaa1115910.bv.tv.component.BvCardDefaults
 import dev.aaa1115910.bv.ui.theme.BVTheme
 
 @Composable
@@ -64,13 +63,12 @@ fun SeasonCard(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             pressedContainerColor = MaterialTheme.colorScheme.surface
         ),
-        shape = ClickableSurfaceDefaults.shape(shape = MaterialTheme.shapes.large),
+        shape = ClickableSurfaceDefaults.shape(shape = MaterialTheme.shapes.medium),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = BvCardDefaults.FocusedScale),
         border = ClickableSurfaceDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(width = 3.dp, color = MaterialTheme.colorScheme.border),
-                shape = MaterialTheme.shapes.large
-            )
-        )
+            focusedBorder = BvCardDefaults.focusedBorder()
+        ),
+        glow = ClickableSurfaceDefaults.glow(focusedGlow = BvCardDefaults.focusedGlow())
     ) {
         Column {
             val coverModifier = if (coverHeight != null) {
@@ -85,13 +83,13 @@ fun SeasonCard(
             }
 
             Box(
-                modifier = Modifier.clip(MaterialTheme.shapes.large),
+                modifier = Modifier.clip(MaterialTheme.shapes.medium),
                 contentAlignment = Alignment.BottomCenter
             ) {
                 AsyncImage(
                     modifier = coverModifier
                         .aspectRatio(0.75f)
-                        .clip(MaterialTheme.shapes.large)
+                        .clip(MaterialTheme.shapes.medium)
                         .onGloballyPositioned { coordinates ->
                             coverRealWidth = with(localDensity) { coordinates.size.width.toDp() }
                         },

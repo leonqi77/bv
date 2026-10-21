@@ -239,7 +239,9 @@ fun UserInfoScreen(
                             title = favoriteItem.title,
                             cover = favoriteItem.cover,
                             upName = favoriteItem.upper.name,
-                            time = favoriteItem.duration.toLong() * 1000
+                            time = favoriteItem.duration.toLong() * 1000,
+                            pubTime = favoriteItem.pubtime.takeIf { it > 0 }?.toInt(),
+                            upFace = favoriteItem.upper.face
                         )
                     )
                 }
