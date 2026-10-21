@@ -35,12 +35,13 @@ fun playButtonState(
     progress: SeasonDetail.UserStatus.Progress?,
     hiddenPaidEpisodeCount: Int
 ): PlayButtonState {
+    // 正片全部因付费被隐藏时，即使还有相关视频（PV、经典回顾等）也不从相关视频开始播放
+    if (detail.episodes.isEmpty() && hiddenPaidEpisodeCount > 0) {
+        return PlayButtonState("正片均需大会员或付费观看", false, null)
+    }
     val first = detail.episodes.firstOrNull()
         ?: detail.sections.firstOrNull { it.episodes.isNotEmpty() }?.episodes?.first()
-    if (first == null) {
-        val text = if (hiddenPaidEpisodeCount > 0) "正片均需大会员或付费观看" else "还没有正片" // 同 season_no_feature_film 字符串资源
-        return PlayButtonState(text, false, null)
-    }
+        ?: return PlayButtonState("还没有正片", false, null) // 同 season_no_feature_film 字符串资源
     val resumed = progress?.let { p ->
         (detail.episodes + detail.sections.flatMap { it.episodes }).firstOrNull { it.id == p.lastEpId }
     }
