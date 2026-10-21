@@ -20,6 +20,9 @@ import dev.aaa1115910.biliapi.http.entity.season.WebSeasonData
  * @param seasons 同系列剧集列表,
  * @param episodes 剧集视频列表
  * @param sections 相关视频列表
+ * @param rating 评分，无则为 null
+ * @param areas 地区名称列表
+ * @param wideCover 横版背景图，无则为空
  */
 data class SeasonDetail(
     val title: String,
@@ -35,7 +38,10 @@ data class SeasonDetail(
     val seasons: List<PgcSeason> = emptyList(),
     val episodes: List<Episode> = emptyList(),
     val sections: List<Section> = emptyList(),
-    var playerIcon: PlayerIcon? = null
+    var playerIcon: PlayerIcon? = null,
+    val rating: Float? = null,
+    val areas: List<String> = emptyList(),
+    val wideCover: String = ""
 ) {
     companion object {
         fun fromSeasonData(seasonData: WebSeasonData): SeasonDetail {
@@ -53,7 +59,10 @@ data class SeasonDetail(
                 seasons = seasonData.seasons.map { PgcSeason.fromSeason(it) },
                 episodes = seasonData.episodes.map { Episode.fromEpisode(it) },
                 sections = seasonData.section.map { Section.fromSection(it) }
-                    .filter { it.episodes.isNotEmpty() }    // 过滤掉跳转别的 pgc 的视频后可能出现空列表
+                    .filter { it.episodes.isNotEmpty() },    // 过滤掉跳转别的 pgc 的视频后可能出现空列表
+                rating = seasonData.rating?.score,
+                areas = seasonData.areas.map { it.name },
+                wideCover = seasonData.bkgCover
             )
         }
 
@@ -82,7 +91,9 @@ data class SeasonDetail(
                 sections = seasonData.modules
                     .filter { it.style == "section" }
                     .map { Section.fromModule(it) },
-                playerIcon = PlayerIcon.fromPlayerIcon(seasonData.playerIcon)
+                playerIcon = PlayerIcon.fromPlayerIcon(seasonData.playerIcon),
+                rating = seasonData.rating?.score,
+                areas = seasonData.areas.map { it.name }
             )
         }
     }

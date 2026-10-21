@@ -49,6 +49,7 @@ import kotlinx.serialization.Serializable
 data class WebSeasonData(
     val activity: Activity,
     val alias: String,
+    val areas: List<Area> = emptyList(),
     @SerialName("bkg_cover")
     val bkgCover: String,
     val cover: String,
@@ -498,6 +499,15 @@ data class Publish(
 data class Rating(
     val count: Int,
     val score: Float
+)
+
+/**
+ * 地区
+ */
+@Serializable
+data class Area(
+    val id: Int,
+    val name: String
 )
 
 /**
