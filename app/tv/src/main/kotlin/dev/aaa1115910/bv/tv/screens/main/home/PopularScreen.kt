@@ -78,7 +78,9 @@ fun PopularScreen(
                         danmaku = with(item.danmaku) { if (this == -1) null else this },
                         upName = item.author,
                         time = item.duration * 1000L,
-                        is4K = item.dimension?.is4K == true
+                        is4K = item.dimension?.is4K == true,
+                        pubTime = item.pubDate.takeIf { it > 0 }?.toInt(),
+                        upFace = item.authorFace
                     ),
                     onClick = { onClickVideo(item) },
                     onFocus = { currentFocusedIndex = index }

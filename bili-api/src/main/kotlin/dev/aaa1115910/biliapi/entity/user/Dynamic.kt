@@ -774,6 +774,7 @@ data class DynamicVideo(
                 play = convertStringPlayCountToNumberPlayCount(archive.stat.play),
                 danmaku = convertStringPlayCountToNumberPlayCount(archive.stat.danmaku),
                 avatar = author.face,
+                time = author.pubTs.toLong(),
             )
         }
 

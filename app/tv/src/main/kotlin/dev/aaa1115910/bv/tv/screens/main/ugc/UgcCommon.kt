@@ -122,10 +122,12 @@ fun UgcRegionScaffold(
                         avid = item.aid,
                         title = item.title,
                         cover = item.cover,
-                        play = item.play,
-                        danmaku = item.danmaku,
+                        play = with(item.play) { if (this == -1) null else this },
+                        danmaku = with(item.danmaku) { if (this == -1) null else this },
                         upName = item.author,
-                        time = item.duration * 1000L
+                        time = item.duration * 1000L,
+                        pubTime = item.pubDate.takeIf { it > 0 }?.toInt(),
+                        upFace = item.authorFace
                     ),
                     onClick = { VideoInfoActivity.actionStart(context, item.aid) },
                     onFocus = { currentFocusedIndex = index }

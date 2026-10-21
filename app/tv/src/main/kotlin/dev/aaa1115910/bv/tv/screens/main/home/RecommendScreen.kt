@@ -78,7 +78,9 @@ fun RecommendScreen(
                         play = with(item.play) { if (this == -1) null else this },
                         danmaku = with(item.danmaku) { if (this == -1) null else this },
                         upName = item.author,
-                        time = item.duration * 1000L
+                        time = item.duration * 1000L,
+                        pubTime = item.pubDate.takeIf { it > 0 }?.toInt(),
+                        upFace = item.authorFace
                     ),
                     onClick = { onClickVideo(item) },
                     onFocus = { currentFocusedIndex = index }

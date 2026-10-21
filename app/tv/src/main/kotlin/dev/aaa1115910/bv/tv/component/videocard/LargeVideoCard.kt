@@ -1,9 +1,8 @@
 package dev.aaa1115910.bv.tv.component.videocard
 
 import android.content.res.Configuration
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -33,6 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.tv.material3.Card
+import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
@@ -41,7 +40,7 @@ import coil.compose.AsyncImage
 import dev.aaa1115910.bv.tv.component.UpIcon
 import dev.aaa1115910.bv.entity.carddata.VideoCardData
 import dev.aaa1115910.bv.ui.theme.BVTheme
-import dev.aaa1115910.bv.util.focusedBorder
+import dev.aaa1115910.bv.tv.component.BvCardDefaults
 
 @Composable
 fun LargeVideoCard(
@@ -53,10 +52,6 @@ fun LargeVideoCard(
     val view = LocalView.current
 
     var hasFocus by remember { mutableStateOf(false) }
-    val scale by animateFloatAsState(
-        targetValue = if (hasFocus) 1f else 0.95f,
-        label = "large video card scale"
-    )
 
     val height = 160.dp
     val reasonColor = Color.Red
@@ -68,11 +63,12 @@ fun LargeVideoCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .scale(scale)
-            .onFocusChanged { hasFocus = it.isFocused }
-            .focusedBorder(MaterialTheme.shapes.medium)
-            .clickable { onClick() },
-        shape = MaterialTheme.shapes.large
+            .onFocusChanged { hasFocus = it.isFocused },
+        onClick = onClick,
+        shape = CardDefaults.shape(shape = MaterialTheme.shapes.medium),
+        scale = BvCardDefaults.scale(),
+        border = BvCardDefaults.border(),
+        glow = BvCardDefaults.glow()
     ) {
         Row(
             modifier = Modifier
@@ -83,36 +79,45 @@ fun LargeVideoCard(
                     AsyncImage(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .aspectRatio(1.6f)
-                            .clip(MaterialTheme.shapes.large),
+                            .aspectRatio(16f / 9f)
+                            .clip(MaterialTheme.shapes.medium),
                         model = data.cover,
                         contentDescription = null,
-                        contentScale = ContentScale.FillBounds
+                        contentScale = ContentScale.Crop
                     )
                 } else {
                     Surface(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .aspectRatio(1.6f),
-                        shape = MaterialTheme.shapes.large,
+                            .aspectRatio(16f / 9f),
+                        shape = MaterialTheme.shapes.medium,
                         colors = SurfaceDefaults.colors(
                             containerColor = Color.White
                         )
                     ) {}
                 }
-                Surface(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(8.dp),
-                    colors = SurfaceDefaults.colors(
-                        containerColor = Color.Black.copy(alpha = 0.5f)
-                    ),
-                    shape = RoundedCornerShape(6.dp)
-                ) {
+                if (data.timeString.isNotBlank()) {
                     Text(
-                        modifier = Modifier.padding(4.dp),
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(6.dp)
+                            .background(Color.Black.copy(alpha = 0.75f), RoundedCornerShape(4.dp))
+                            .padding(horizontal = 4.dp, vertical = 1.dp),
                         text = data.timeString,
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White,
+                        maxLines = 1
+                    )
+                }
+                if (data.is4K) {
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(6.dp)
+                            .background(Color.Black.copy(alpha = 0.6f), MaterialTheme.shapes.extraSmall)
+                            .padding(horizontal = 4.dp, vertical = 1.dp),
+                        text = "4K",
+                        style = MaterialTheme.typography.labelSmall,
                         color = Color.White
                     )
                 }
