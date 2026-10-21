@@ -1,6 +1,5 @@
 package dev.aaa1115910.bv.player.tv.controller
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
@@ -14,6 +13,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -124,16 +125,58 @@ fun VideoPlayerController(
     var menuNav by remember { mutableStateOf<VideoPlayerMenuNavItem?>(null) }
     var menuPictureItem by remember { mutableStateOf<VideoPlayerPictureMenuItem?>(null) }
 
-    val playlist = videoPlayerConfigData.availableVideoList.filterIsInstance<VideoListItemData>()
-    val currentIndex = playlist.indexOfFirst { it.cid == videoPlayerConfigData.currentVideoCid }
-    val previousVideo = if (currentIndex > 0) playlist[currentIndex - 1] else null
-    val nextVideo = if (currentIndex >= 0) playlist.getOrNull(currentIndex + 1) else null
+    // The seek data changes every 100ms, so everything the layer needs is remembered on its real
+    // inputs, and only the layer's progress section reads the position.
+    val videoList = videoPlayerConfigData.availableVideoList
+    val playlist = remember(videoList, videoList.size, videoPlayerConfigData.currentVideoCid) {
+        playlistPosition(videoList, videoPlayerConfigData.currentVideoCid)
+    }
+    val seekData by rememberUpdatedState(videoPlayerSeekData)
+    val layerProgress = remember {
+        {
+            PlaybackProgress(
+                positionMs = if (showSeekController) goTime else seekData.position,
+                durationMs = seekData.duration,
+                bufferedMs = seekData.duration * seekData.bufferedPercentage / 100
+            )
+        }
+    }
+    val header = remember(videoPlayerVideoInfoData) {
+        playerHeader(videoPlayerVideoInfoData, videoPlayerVideoInfoData.fromSeason)
+    }
+    val clock = remember(videoPlayerClockData.hour, videoPlayerClockData.minute) {
+        "%02d:%02d".format(videoPlayerClockData.hour, videoPlayerClockData.minute)
+    }
 
-    // The danmaku button switches between none and the last non-empty selection.
-    val enabledDanmaku = videoPlayerConfigData.currentDanmakuEnabledList.toList()
-    var lastEnabledDanmaku by remember { mutableStateOf(enabledDanmaku) }
-    LaunchedEffect(enabledDanmaku) {
-        if (enabledDanmaku.isNotEmpty()) lastEnabledDanmaku = enabledDanmaku
+    // The danmaku button switches between none and the last non-empty selection. The list is the
+    // ViewModel's live snapshot list, so it is observed rather than copied on every recomposition.
+    val danmakuList = videoPlayerConfigData.currentDanmakuEnabledList
+    val danmakuOn by remember(danmakuList) { derivedStateOf { danmakuList.isNotEmpty() } }
+    var lastEnabledDanmaku by remember { mutableStateOf(danmakuList.toList()) }
+    LaunchedEffect(danmakuList) {
+        snapshotFlow { danmakuList.toList() }.collect {
+            if (it.isNotEmpty()) lastEnabledDanmaku = it
+        }
+    }
+    val subtitleOn = videoPlayerConfigData.subtitleOn
+    val buttonValues = remember(
+        videoPlayerConfigData.currentResolution, videoPlayerConfigData.currentVideoSpeed,
+        danmakuOn, subtitleOn, playlist.episodeLabel
+    ) {
+        mapOf(
+            ControlButtonId.Resolution to videoPlayerConfigData.currentResolution.getShortDisplayName(context),
+            ControlButtonId.Speed to "${(videoPlayerConfigData.currentVideoSpeed * 100).roundToInt() / 100f}×",
+            ControlButtonId.Danmaku to if (danmakuOn) "开" else "关",
+            ControlButtonId.Subtitle to if (subtitleOn) "开" else "关",
+            ControlButtonId.Episodes to playlist.episodeLabel,
+        )
+    }
+    val activeButtons = remember(danmakuOn, subtitleOn) {
+        buildSet {
+            add(ControlButtonId.Resolution)
+            if (danmakuOn) add(ControlButtonId.Danmaku)
+            if (subtitleOn) add(ControlButtonId.Subtitle)
+        }
     }
 
     // Same condition as the pause indicator, so buffering does not count as a pause.
@@ -201,8 +244,8 @@ fun VideoPlayerController(
         logger.info { "Controls layer: activate $id" }
         when (id) {
             ControlButtonId.PlayPause -> togglePlay()
-            ControlButtonId.Previous -> previousVideo?.let(onPlayNewVideo)
-            ControlButtonId.Next -> nextVideo?.let(onPlayNewVideo)
+            ControlButtonId.Previous -> playlist.previous?.let(onPlayNewVideo)
+            ControlButtonId.Next -> playlist.next?.let(onPlayNewVideo)
             ControlButtonId.Resolution ->
                 openMenu(VideoPlayerMenuNavItem.Picture, VideoPlayerPictureMenuItem.Resolution)
 
@@ -210,7 +253,7 @@ fun VideoPlayerController(
                 openMenu(VideoPlayerMenuNavItem.Picture, VideoPlayerPictureMenuItem.PlaySpeed)
 
             ControlButtonId.Danmaku -> onDanmakuSwitchChange(
-                if (enabledDanmaku.isNotEmpty()) emptyList()
+                if (danmakuOn) emptyList()
                 else lastEnabledDanmaku.ifEmpty { DanmakuType.entries }
             )
 
@@ -442,23 +485,14 @@ fun VideoPlayerController(
         PlayStateTips(showPauseIcon = controls.focus == ControlsFocus.Hidden)
         ControlsLayer(
             state = controls,
-            header = playerHeader(videoPlayerVideoInfoData, videoPlayerVideoInfoData.fromSeason),
-            positionMs = if (showSeekController) goTime else videoPlayerSeekData.position,
-            durationMs = videoPlayerSeekData.duration,
-            bufferedMs = videoPlayerSeekData.duration * videoPlayerSeekData.bufferedPercentage / 100,
+            header = header,
+            progress = layerProgress,
             isPlaying = videoPlayerStateData.isPlaying,
-            buttonValues = controlButtonValues(context, videoPlayerConfigData, enabledDanmaku.isNotEmpty()),
-            clock = "%02d:%02d".format(videoPlayerClockData.hour, videoPlayerClockData.minute),
+            buttonValues = buttonValues,
+            clock = clock,
             followed = videoPlayerVideoInfoData.upFollowed && !videoPlayerVideoInfoData.fromSeason,
-            activeButtons = buildSet {
-                add(ControlButtonId.Resolution)
-                if (enabledDanmaku.isNotEmpty()) add(ControlButtonId.Danmaku)
-                if (videoPlayerConfigData.subtitleOn) add(ControlButtonId.Subtitle)
-            },
-            disabledButtons = buildSet {
-                if (previousVideo == null) add(ControlButtonId.Previous)
-                if (nextVideo == null) add(ControlButtonId.Next)
-            },
+            activeButtons = activeButtons,
+            disabledButtons = playlist.disabledButtons,
             seekPreview = videoPlayerVideoShotData.videoShot.takeIf { showSeekController }
         )
         SeekController(
@@ -508,24 +542,31 @@ private fun Key.toRemoteKey(): RemoteKey? = when (this) {
 private val VideoPlayerConfigData.subtitleOn: Boolean
     get() = currentSubtitleId != -1L && currentSubtitleId != 0L
 
-private fun controlButtonValues(
-    context: Context,
-    config: VideoPlayerConfigData,
-    danmakuOn: Boolean
-): Map<ControlButtonId, String> {
-    val current = config.availableVideoList
-        .filterIsInstance<VideoListItemData>()
-        .firstOrNull { it.cid == config.currentVideoCid }
-    val episode = when (current) {
-        null -> ""
-        is VideoListPart -> "P${current.index + 1}"
-        else -> "EP${current.index + 1}"
-    }
-    return mapOf(
-        ControlButtonId.Resolution to config.currentResolution.getShortDisplayName(context),
-        ControlButtonId.Speed to "${(config.currentVideoSpeed * 100).roundToInt() / 100f}×",
-        ControlButtonId.Danmaku to if (danmakuOn) "开" else "关",
-        ControlButtonId.Subtitle to if (config.subtitleOn) "开" else "关",
-        ControlButtonId.Episodes to episode,
+/** The current video's neighbours in the playlist, its 选集 label and the buttons that would do nothing. */
+private class PlaylistPosition(
+    val previous: VideoListItemData?,
+    val next: VideoListItemData?,
+    val episodeLabel: String,
+    val disabledButtons: Set<ControlButtonId>
+)
+
+private fun playlistPosition(videoList: List<VideoListItem>, currentCid: Long): PlaylistPosition {
+    val playlist = videoList.filterIsInstance<VideoListItemData>()
+    val index = playlist.indexOfFirst { it.cid == currentCid }
+    val current = playlist.getOrNull(index)
+    val previous = if (index > 0) playlist[index - 1] else null
+    val next = if (index >= 0) playlist.getOrNull(index + 1) else null
+    return PlaylistPosition(
+        previous = previous,
+        next = next,
+        episodeLabel = when (current) {
+            null -> ""
+            is VideoListPart -> "P${current.index + 1}"
+            else -> "EP${current.index + 1}"
+        },
+        disabledButtons = buildSet {
+            if (previous == null) add(ControlButtonId.Previous)
+            if (next == null) add(ControlButtonId.Next)
+        }
     )
 }
