@@ -15,7 +15,9 @@ data class UgcItem(
     val danmaku: Int,
     val duration: Int,
     val idx: Int = -1,
-    val dimension: Dimension? = null
+    val dimension: Dimension? = null,
+    val authorFace: String = "",
+    val pubDate: Long = 0L
 ) {
     companion object {
         fun fromRcmdItem(rcmdItem: RcmdIndexData.RcmdItem) =
@@ -56,7 +58,9 @@ data class UgcItem(
                 author = rcmdItem.owner?.name ?: "",
                 play = rcmdItem.stat?.view ?: -1,
                 danmaku = rcmdItem.stat?.danmaku ?: -1,
-                duration = rcmdItem.duration
+                duration = rcmdItem.duration,
+                authorFace = rcmdItem.owner?.face ?: "",
+                pubDate = rcmdItem.pubdate.toLong()
             )
 
         fun fromVideoInfo(videoInfo: dev.aaa1115910.biliapi.http.entity.video.VideoInfo) =
@@ -68,7 +72,9 @@ data class UgcItem(
                 cover = videoInfo.pic,
                 play = videoInfo.stat.view,
                 danmaku = videoInfo.stat.danmaku,
-                dimension = Dimension.fromDimension(videoInfo.dimension)
+                dimension = Dimension.fromDimension(videoInfo.dimension),
+                authorFace = videoInfo.owner.face,
+                pubDate = videoInfo.pubdate.toLong()
             )
 
         fun fromSmallCoverV5(card: bilibili.app.card.v1.SmallCoverV5) =
@@ -91,7 +97,9 @@ data class UgcItem(
                 author = item.name,
                 cover = item.cover,
                 play = item.play ?: -1,
-                danmaku = item.danmaku ?: -1
+                danmaku = item.danmaku ?: -1,
+                authorFace = item.face,
+                pubDate = item.pubDate.toLong()
             )
 
         fun fromRegionRcmdArchive(archive: dev.aaa1115910.biliapi.http.entity.region.RegionFeedRcmd.Archive) =
@@ -102,7 +110,8 @@ data class UgcItem(
                 author = archive.author.name,
                 cover = archive.cover,
                 play = archive.stat.view,
-                danmaku = archive.stat.danmaku
+                danmaku = archive.stat.danmaku,
+                pubDate = archive.pubdate
             )
     }
 }
