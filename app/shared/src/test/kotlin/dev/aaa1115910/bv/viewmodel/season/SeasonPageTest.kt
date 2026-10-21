@@ -82,6 +82,15 @@ class SeasonPageTest {
     }
 
     @Test
+    fun allHiddenDisabledEvenWithSections() {
+        val clip = ep(88, "出自65话")
+        assertEquals(
+            PlayButtonState("正片均需大会员或付费观看", false, null),
+            playButtonState(detail(sections = listOf(Section(1, "经典回顾", listOf(clip)))), progress(clip.id, 10), 200)
+        )
+    }
+
+    @Test
     fun resumeFromSectionEpisode() {
         val pv = ep(77, "PV1")
         assertEquals(
