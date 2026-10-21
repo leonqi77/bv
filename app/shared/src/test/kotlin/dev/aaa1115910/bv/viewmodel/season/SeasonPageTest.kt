@@ -100,6 +100,44 @@ class SeasonPageTest {
     }
 
     @Test
+    fun finishedMidShowPlaysNext() {
+        assertEquals(
+            PlayButtonState("播放 第3话", true, eps[2].id),
+            playButtonState(detail(eps = eps), progress(eps[1].id, -1), 0)
+        )
+    }
+
+    @Test
+    fun finishedLastEpisodePlaysFirst() {
+        assertEquals(
+            PlayButtonState("播放 第1话", true, eps[0].id),
+            playButtonState(detail(eps = eps), progress(eps[4].id, -1), 0)
+        )
+    }
+
+    @Test
+    fun finishedSectionEpisodePlaysNextInSection() {
+        val pv1 = ep(77, "PV1")
+        val pv2 = ep(78, "PV2")
+        val sections = listOf(Section(1, "s", listOf(pv1, pv2)))
+        assertEquals(
+            PlayButtonState("播放 PV2", true, pv2.id),
+            playButtonState(detail(eps = eps, sections = sections), progress(pv1.id, -1), 0)
+        )
+    }
+
+    @Test
+    fun finishedLastSectionEpisodeWithoutFeatureFilmPlaysSectionFirst() {
+        val pv1 = ep(77, "PV1")
+        val pv2 = ep(78, "PV2")
+        val sections = listOf(Section(1, "s", listOf(pv1, pv2)))
+        assertEquals(
+            PlayButtonState("播放 PV1", true, pv1.id),
+            playButtonState(detail(sections = sections), progress(pv2.id, -1), 0)
+        )
+    }
+
+    @Test
     fun noFeatureFilm() {
         assertEquals(
             PlayButtonState("还没有正片", false, null),
