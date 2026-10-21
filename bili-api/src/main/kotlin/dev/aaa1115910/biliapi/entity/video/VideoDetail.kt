@@ -5,6 +5,8 @@ import bilibili.app.view.v1.ViewReply
 import bilibili.app.view.v1.ugcSeasonOrNull
 import dev.aaa1115910.biliapi.entity.user.Author
 import dev.aaa1115910.biliapi.entity.video.season.UgcSeason
+import dev.aaa1115910.biliapi.http.entity.video.RelatedVideoInfo
+import dev.aaa1115910.biliapi.http.entity.video.VideoInfo
 import dev.aaa1115910.biliapi.http.entity.video.VideoStat
 import java.util.Date
 
@@ -91,28 +93,37 @@ data class VideoDetail(
         }
 
         fun fromVideoDetail(videoDetail: dev.aaa1115910.biliapi.http.entity.video.VideoDetail) =
-            VideoDetail(
-                bvid = videoDetail.view.bvid,
-                aid = videoDetail.view.aid,
-                cid = videoDetail.view.cid,
-                cover = videoDetail.view.pic,
-                title = videoDetail.view.title,
-                publishDate = Date(videoDetail.view.pubdate * 1000L),
-                description = videoDetail.view.desc,
-                stat = Stat.fromVideoStat(videoDetail.view.stat),
-                author = Author.fromVideoOwner(videoDetail.view.owner),
-                pages = videoDetail.view.pages.map { VideoPage.fromVideoPage(it) },
-                ugcSeason = videoDetail.view.ugcSeason?.let { UgcSeason.fromUgcSeason(it) },
-                relatedVideos = videoDetail.related?.map { RelatedVideo.fromRelate(it) }
-                    ?: emptyList(),
-                redirectToEp = videoDetail.view.redirectUrl?.contains("ep") ?: false,
-                epid = videoDetail.view.redirectUrl?.split("ep", "?")?.get(1)?.toInt(),
-                argueTip = videoDetail.view.stat.argueMsg.takeIf { it.isNotEmpty() },
-                tags = videoDetail.tags.map { Tag.fromTag(it) },
-                userActions = UserActions(),
-                history = History(0, 0),
-                playerIcon = null
+            fromVideoInfo(
+                videoInfo = videoDetail.view,
+                relatedVideos = videoDetail.related ?: emptyList(),
+                tags = videoDetail.tags.map { Tag.fromTag(it) }
             )
+
+        fun fromVideoInfo(
+            videoInfo: VideoInfo,
+            relatedVideos: List<RelatedVideoInfo>,
+            tags: List<Tag>
+        ) = VideoDetail(
+            bvid = videoInfo.bvid,
+            aid = videoInfo.aid,
+            cid = videoInfo.cid,
+            cover = videoInfo.pic,
+            title = videoInfo.title,
+            publishDate = Date(videoInfo.pubdate * 1000L),
+            description = videoInfo.desc,
+            stat = Stat.fromVideoStat(videoInfo.stat),
+            author = Author.fromVideoOwner(videoInfo.owner),
+            pages = videoInfo.pages.map { VideoPage.fromVideoPage(it) },
+            ugcSeason = videoInfo.ugcSeason?.let { UgcSeason.fromUgcSeason(it) },
+            relatedVideos = relatedVideos.map { RelatedVideo.fromRelate(it) },
+            redirectToEp = videoInfo.redirectUrl?.contains("ep") ?: false,
+            epid = videoInfo.redirectUrl?.split("ep", "?")?.get(1)?.toInt(),
+            argueTip = videoInfo.stat.argueMsg.takeIf { it.isNotEmpty() },
+            tags = tags,
+            userActions = UserActions(),
+            history = History(0, 0),
+            playerIcon = null
+        )
     }
 
     data class Stat(
