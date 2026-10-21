@@ -62,7 +62,8 @@ fun NavigationDrawerScope.DrawerContent(
     onShowUserPanel: () -> Unit = {},
     onFocusToContent: () -> Unit = {},
     onLogin: () -> Unit = {},
-    onReselect: (DrawerItem) -> Unit = {}
+    onReselect: (DrawerItem) -> Unit = {},
+    itemsFocusRequester: FocusRequester = remember { FocusRequester() }
 ) {
     var selectedItem by remember { mutableStateOf(DrawerItem.Home) }
     val centerFocusRequester = remember { FocusRequester() }
@@ -139,7 +140,9 @@ fun NavigationDrawerScope.DrawerContent(
             )
         }
         LazyColumn(
-            modifier = Modifier.focusRestorer(centerFocusRequester),
+            modifier = Modifier
+                .focusRequester(itemsFocusRequester)
+                .focusRestorer(centerFocusRequester),
             verticalArrangement = Arrangement.Center
         ) {
             listOf(
