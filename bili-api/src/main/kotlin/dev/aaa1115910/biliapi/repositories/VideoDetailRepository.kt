@@ -13,6 +13,7 @@ import dev.aaa1115910.biliapi.entity.reply.CommentRepliesData
 import dev.aaa1115910.biliapi.entity.reply.CommentReplyPage
 import dev.aaa1115910.biliapi.entity.reply.CommentSort
 import dev.aaa1115910.biliapi.entity.reply.CommentsData
+import dev.aaa1115910.biliapi.entity.video.Tag
 import dev.aaa1115910.biliapi.entity.video.VideoDetail
 import dev.aaa1115910.biliapi.entity.video.season.SeasonDetail
 import dev.aaa1115910.biliapi.grpc.utils.handleGrpcException
@@ -46,12 +47,37 @@ class VideoDetailRepository(
         return when (preferApiType) {
             ApiType.Web -> {
                 withContext(Dispatchers.IO) {
+                    // /x/web-interface/view/detail 会被风控拦截 (-412 request was banned)，
+                    // 改为分别请求视频信息、相关推荐和标签
+                    val relatedVideos = async {
+                        runCatching {
+                            BiliHttpApi.getRelatedVideos(avid = aid).data
+                        }.onFailure {
+                            println("Get related videos failed: $it")
+                        }.getOrDefault(emptyList())
+                    }
+
+                    val tags = async {
+                        runCatching {
+                            BiliHttpApi.getVideoTags(
+                                avid = aid,
+                                sessData = authRepository.sessionData ?: ""
+                            ).getResponseData().map { Tag.fromTag(it) }
+                        }.onFailure {
+                            println("Get video tags failed: $it")
+                        }.getOrDefault(emptyList())
+                    }
+
                     val videoDetailWithoutUserActions = async {
-                        val httpVideoDetail = BiliHttpApi.getVideoDetail(
+                        val videoInfo = BiliHttpApi.getVideoInfo(
                             av = aid,
                             sessData = authRepository.sessionData ?: ""
                         ).getResponseData()
-                        VideoDetail.fromVideoDetail(httpVideoDetail)
+                        VideoDetail.fromVideoInfo(
+                            videoInfo = videoInfo,
+                            relatedVideos = relatedVideos.await(),
+                            tags = tags.await()
+                        )
                     }
 
                     //check liked, favoured, coined status...
