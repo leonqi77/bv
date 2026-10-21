@@ -869,6 +869,12 @@ fun VideoInfoData(
                         Text(text = "${videoDetail.stat.favorite} 收藏")
                         Text(text = "·")
                         Text(text = videoDetail.publishDate.formatPubTimeString())
+                        val qualityLabel = (videoDetail.pages.find { it.cid == videoDetail.cid }
+                            ?: videoDetail.pages.firstOrNull())?.dimension?.qualityLabel
+                        if (!qualityLabel.isNullOrEmpty()) {
+                            Text(text = "·")
+                            Text(text = qualityLabel)
+                        }
                     }
                 }
                 Row(

@@ -277,11 +277,15 @@ fun SeasonInfoScreen(
                             if (seasonViewModel.lastPlayProgress == null) {
                                 logger.fInfo { "Didn't find any play record" }
                                 //未登录或无播放记录，此时lastPlayProgress==null，默认播放第一集正片
-                                playAid = seasonViewModel.seasonData?.episodes?.first()?.aid ?: -1
-                                playCid = seasonViewModel.seasonData?.episodes?.first()?.cid ?: -1
-                                playEpid = seasonViewModel.seasonData?.episodes?.first()?.id ?: -1
+                                playAid = seasonViewModel.seasonData?.episodes?.firstOrNull()?.aid ?: -1
+                                playCid = seasonViewModel.seasonData?.episodes?.firstOrNull()?.cid ?: -1
+                                playEpid = seasonViewModel.seasonData?.episodes?.firstOrNull()?.id ?: -1
                                 if (playCid == -1L) {
-                                    R.string.season_no_feature_film.toast(context)
+                                    if (seasonViewModel.hiddenPaidEpisodeCount > 0) {
+                                        R.string.season_all_paid_episodes_hidden.toast(context)
+                                    } else {
+                                        R.string.season_no_feature_film.toast(context)
+                                    }
                                 } else {
                                     episodeList =
                                         seasonViewModel.seasonData?.episodes ?: emptyList()
@@ -291,7 +295,14 @@ fun SeasonInfoScreen(
                                 logger.fInfo { "Find play record: ${seasonViewModel.lastPlayProgress}" }
 
                                 //懒得去改播放器那边来支持epid，就直接在这边查找cid了
-                                playEpid = seasonViewModel.lastPlayProgress!!.lastEpId
+                                var lastEpId = seasonViewModel.lastPlayProgress!!.lastEpId
+                                //最后播放的剧集可能是已被隐藏的付费剧集，此时改为播放第一集正片
+                                val allEpisodes = (seasonViewModel.seasonData?.episodes ?: emptyList()) +
+                                        (seasonViewModel.seasonData?.sections?.flatMap { it.episodes } ?: emptyList())
+                                if (seasonViewModel.hiddenPaidEpisodeCount > 0 && allEpisodes.none { it.id == lastEpId }) {
+                                    lastEpId = seasonViewModel.seasonData?.episodes?.firstOrNull()?.id ?: lastEpId
+                                }
+                                playEpid = lastEpId
                                 seasonViewModel.seasonData?.episodes?.forEach {
                                     if (it.id == playEpid) {
                                         playAid = it.aid
@@ -347,6 +358,14 @@ fun SeasonInfoScreen(
                         onClickFollow = onClickFollow,
                         onClickCover = onClickCover
                     )
+                }
+                if (seasonViewModel.seasonData?.episodes?.isEmpty() == true && seasonViewModel.hiddenPaidEpisodeCount > 0) {
+                    item {
+                        Text(
+                            modifier = Modifier.padding(start = 50.dp),
+                            text = stringResource(R.string.season_all_paid_episodes_hidden)
+                        )
+                    }
                 }
                 if (seasonViewModel.seasonData?.episodes?.isNotEmpty() == true) {
                     item {

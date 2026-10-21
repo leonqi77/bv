@@ -183,6 +183,7 @@
     <string name="season_count_tip">系列共 %1$s 部</string>
     <string name="season_feature_film">正片</string>
     <string name="season_no_feature_film">还没有正片</string>
+    <string name="season_all_paid_episodes_hidden">正片均需大会员或付费观看，已隐藏</string>
 
     <string name="settings_crash_test_text">点一下崩一下，崩溃不花一份钱</string>
     <string name="settings_crash_test_title">崩溃测试</string>
@@ -223,6 +224,8 @@
     <string name="settings_other_firebase_title">发送错误日志</string>
     <string name="settings_other_fps_text">在屏幕左上角显示 FPS，这需要重启 App</string>
     <string name="settings_other_fps_title">FPS 显示</string>
+    <string name="settings_other_hide_paid_episodes_text">隐藏剧集中需要大会员或付费才能观看的剧集</string>
+    <string name="settings_other_hide_paid_episodes_title">隐藏付费剧集</string>
     <string name="settings_storage_calculating">计算中</string>
     <string name="settings_storage_crash_logs">崩溃日志</string>
     <string name="settings_storage_image_cache">图片缓存</string>

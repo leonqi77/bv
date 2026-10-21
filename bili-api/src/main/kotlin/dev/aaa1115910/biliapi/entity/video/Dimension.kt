@@ -5,6 +5,24 @@ data class Dimension(
     val height: Int,
     val isVertical: Boolean = width < height
 ) {
+    private val longSide get() = maxOf(width, height)
+
+    val is4K get() = longSide >= 3840
+
+    /**
+     * 根据上传视频的分辨率估计的最高清晰度，实际可用清晰度以播放地址为准
+     */
+    val qualityLabel
+        get() = when {
+            longSide >= 3840 -> "4K"
+            longSide >= 2560 -> "2K"
+            longSide >= 1920 -> "1080P"
+            longSide >= 1280 -> "720P"
+            longSide >= 854 -> "480P"
+            longSide > 0 -> "360P"
+            else -> ""
+        }
+
     companion object {
         fun fromDimension(dimension: bilibili.app.archive.v1.Dimension) = Dimension(
             width = dimension.width.toInt(),

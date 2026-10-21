@@ -36,6 +36,7 @@ fun OtherSetting(
     val context = LocalContext.current
 
     var showFps by remember { mutableStateOf(Prefs.showFps) }
+    var hidePaidEpisodes by remember { mutableStateOf(Prefs.hidePaidEpisodes) }
     var updateAlpha by remember { mutableStateOf(Prefs.updateAlpha) }
     var enableFfmpegAudioRenderer by remember { mutableStateOf(Prefs.enableFfmpegAudioRenderer) }
 
@@ -64,6 +65,17 @@ fun OtherSetting(
                     onCheckedChange = {
                         Prefs.enableFirebaseCollection = it
                         FirebaseUtil.setCrashlyticsCollectionEnabled(it)
+                    }
+                )
+            }
+            item {
+                SettingSwitchListItem(
+                    title = stringResource(R.string.settings_other_hide_paid_episodes_title),
+                    supportText = stringResource(R.string.settings_other_hide_paid_episodes_text),
+                    checked = hidePaidEpisodes,
+                    onCheckedChange = {
+                        hidePaidEpisodes = it
+                        Prefs.hidePaidEpisodes = it
                     }
                 )
             }
