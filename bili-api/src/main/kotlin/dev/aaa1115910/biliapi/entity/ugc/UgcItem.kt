@@ -1,5 +1,6 @@
 package dev.aaa1115910.biliapi.entity.ugc
 
+import dev.aaa1115910.biliapi.entity.video.Dimension
 import dev.aaa1115910.biliapi.http.entity.home.RcmdIndexData
 import dev.aaa1115910.biliapi.http.entity.home.RcmdTopData
 import dev.aaa1115910.biliapi.util.convertStringTimeToSeconds
@@ -13,7 +14,8 @@ data class UgcItem(
     val play: Int,
     val danmaku: Int,
     val duration: Int,
-    val idx: Int = -1
+    val idx: Int = -1,
+    val dimension: Dimension? = null
 ) {
     companion object {
         fun fromRcmdItem(rcmdItem: RcmdIndexData.RcmdItem) =
@@ -65,7 +67,8 @@ data class UgcItem(
                 author = videoInfo.owner.name,
                 cover = videoInfo.pic,
                 play = videoInfo.stat.view,
-                danmaku = videoInfo.stat.danmaku
+                danmaku = videoInfo.stat.danmaku,
+                dimension = Dimension.fromDimension(videoInfo.dimension)
             )
 
         fun fromSmallCoverV5(card: bilibili.app.card.v1.SmallCoverV5) =

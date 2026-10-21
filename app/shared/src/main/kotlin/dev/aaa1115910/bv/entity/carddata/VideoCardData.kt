@@ -19,6 +19,7 @@ data class VideoCardData(
     val epId: Int? = null,
     val pubTime: Int? = null,
     var pubTimeString: String = "",
+    val is4K: Boolean = false,
 ) {
     init {
         play?.let {

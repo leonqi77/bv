@@ -304,6 +304,10 @@ object Prefs {
         get() = runBlocking { dsm.getPreferenceFlow(PrefKeys.prefBlacklistUserRequest).first() }
         set(value) = runBlocking { dsm.editPreference(PrefKeys.prefBlacklistUserKey, value) }
 
+    var hidePaidEpisodes: Boolean
+        get() = runBlocking { dsm.getPreferenceFlow(PrefKeys.prefHidePaidEpisodesRequest).first() }
+        set(value) = runBlocking { dsm.editPreference(PrefKeys.prefHidePaidEpisodesKey, value) }
+
     var themeType: ThemeType
         get() = runBlocking {
             ThemeType.entries[dsm.getPreferenceFlow(PrefKeys.prefThemeTypeRequest).first()]
@@ -363,6 +367,7 @@ object PrefKeys {
     val prefDefaultDanmakuMask = booleanPreferencesKey("prefer_enable_webmark")
     val prefEnableFfmpegAudioRenderer = booleanPreferencesKey("enable_ffmpeg_audio_renderer")
     val prefBlacklistUserKey = booleanPreferencesKey("blacklist_user")
+    val prefHidePaidEpisodesKey = booleanPreferencesKey("hide_paid_episodes")
     val prefThemeTypeKey = intPreferencesKey("theme_type")
     val prefPlayModeKey = intPreferencesKey("play_mode")
 
@@ -374,7 +379,7 @@ object PrefKeys {
     val prefUidCkMd5Request = PreferenceRequest(prefUidCkMd5Key, "")
     val prefTokenExpiredDateRequest = PreferenceRequest(prefTokenExpiredDateKey, 0)
     val prefDefaultPlaySpeedRequest = PreferenceRequest(prefDefaultPlaySpeedKey, 1f)
-    val prefDefaultQualityRequest = PreferenceRequest(prefDefaultQualityKey, Resolution.R1080P.code)
+    val prefDefaultQualityRequest = PreferenceRequest(prefDefaultQualityKey, Resolution.R4K.code)
     val prefDefaultAudioRequest = PreferenceRequest(prefDefaultAudioKey, Audio.A192K.code)
     val prefDefaultDanmakuSizeRequest = PreferenceRequest(prefDefaultDanmakuSizeKey, 6)
     val prefDefaultDanmakuScaleRequest = PreferenceRequest(prefDefaultDanmakuScaleKey, 1f)
@@ -421,6 +426,7 @@ object PrefKeys {
     val prefDefaultDanmakuMaskRequest = PreferenceRequest(prefDefaultDanmakuMask, false)
     val prefEnableFfmpegEndererRequest = PreferenceRequest(prefEnableFfmpegAudioRenderer, false)
     val prefBlacklistUserRequest = PreferenceRequest(prefBlacklistUserKey, false)
+    val prefHidePaidEpisodesRequest = PreferenceRequest(prefHidePaidEpisodesKey, true)
     val prefThemeTypeRequest = PreferenceRequest(prefThemeTypeKey, ThemeType.Auto.ordinal)
     val prefPlayModeRequest = PreferenceRequest(prefPlayModeKey, PlayMode.Sequential.ordinal)
 }

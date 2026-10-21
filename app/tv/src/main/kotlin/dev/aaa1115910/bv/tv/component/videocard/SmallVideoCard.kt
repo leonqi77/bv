@@ -129,7 +129,8 @@ fun SmallVideoCardContent(
                 cover = data.cover,
                 play = data.playString,
                 danmaku = data.danmakuString,
-                time = data.timeString
+                time = data.timeString,
+                is4K = data.is4K
             )
         }
 
@@ -231,7 +232,8 @@ fun CardCover(
     cover: String,
     play: String,
     danmaku: String,
-    time: String
+    time: String,
+    is4K: Boolean = false
 ) {
     var width by remember { mutableStateOf(200.dp) }
     val showInfo by remember { derivedStateOf { width > 160.dp } }
@@ -278,6 +280,18 @@ fun CardCover(
                 play = play,
                 danmaku = danmaku,
                 time = time
+            )
+        }
+        if (is4K) {
+            Text(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(6.dp)
+                    .background(Color.Black.copy(alpha = 0.6f), MaterialTheme.shapes.extraSmall)
+                    .padding(horizontal = 4.dp, vertical = 1.dp),
+                text = "4K",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White
             )
         }
     }

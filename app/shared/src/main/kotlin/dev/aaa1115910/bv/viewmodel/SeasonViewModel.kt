@@ -43,6 +43,11 @@ class SeasonViewModel(
     var isFollowing by mutableStateOf(false)
     var lastPlayProgress by mutableStateOf<SeasonDetail.UserStatus.Progress?>(null)
 
+    /**
+     * 因 [Prefs.hidePaidEpisodes] 而隐藏的剧集数量
+     */
+    var hiddenPaidEpisodeCount by mutableStateOf(0)
+
     var tip by mutableStateOf("Loading")
 
     val uuid: String = UUID.randomUUID().toString()
@@ -54,8 +59,11 @@ class SeasonViewModel(
                 epid = epId,
                 preferApiType = if (proxyArea != ProxyArea.MainLand) ApiType.App else Prefs.apiType
             )
+            val visibleData = if (Prefs.hidePaidEpisodes) data.withoutPaidEpisodes() else data
+            val hiddenCount = data.episodeCount() - visibleData.episodeCount()
             withContext(Dispatchers.Main) {
-                seasonData = data.copy()
+                seasonData = visibleData
+                hiddenPaidEpisodeCount = hiddenCount
                 seasons.swapList(data.seasons)
                 isFollowing = data.userStatus.follow
                 lastPlayProgress = data.userStatus.progress
@@ -66,6 +74,15 @@ class SeasonViewModel(
             logger.fInfo { "Get season info failed: ${it.stackTraceToString()}" }
         }
     }
+
+    private fun SeasonDetail.withoutPaidEpisodes() = copy(
+        episodes = episodes.filterNot { it.isPaid },
+        sections = sections
+            .map { section -> section.copy(episodes = section.episodes.filterNot { it.isPaid }) }
+            .filter { it.episodes.isNotEmpty() }
+    )
+
+    private fun SeasonDetail.episodeCount() = episodes.size + sections.sumOf { it.episodes.size }
 
     suspend fun updateLastPlayProgress() {
         //延迟 200ms，避免获取到的依旧是旧数据

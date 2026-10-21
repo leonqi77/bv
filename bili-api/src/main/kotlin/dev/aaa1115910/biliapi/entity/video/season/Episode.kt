@@ -17,6 +17,7 @@ import dev.aaa1115910.biliapi.entity.video.VideoPage
  * @param cover 封面
  * @param duration 时长
  * @param dimension 分辨率
+ * @param isPaid 是否需要大会员或付费才能观看
  */
 data class Episode(
     val id: Int,
@@ -29,7 +30,8 @@ data class Episode(
     val cover: String,
     val duration: Int,
     val dimension: Dimension?,
-    val pages: List<VideoPage>
+    val pages: List<VideoPage>,
+    val isPaid: Boolean = false
 ) {
     companion object {
         fun fromEpisode(episode: bilibili.app.view.v1.Episode) = Episode(
@@ -70,7 +72,9 @@ data class Episode(
             epid = episode.epId,
             duration = episode.duration,
             dimension = episode.dimension?.let { Dimension.fromDimension(it) },
-            pages = emptyList()
+            pages = emptyList(),
+            // status 2：免费（含限免、预告），0：花絮等，其余如 13 大会员、23 付费点映均需付费
+            isPaid = episode.status != 0 && episode.status != 2
         )
     }
 }
