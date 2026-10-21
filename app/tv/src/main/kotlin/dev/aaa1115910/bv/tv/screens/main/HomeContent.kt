@@ -50,6 +50,7 @@ import dev.aaa1115910.bv.util.fInfo
 import dev.aaa1115910.bv.viewmodel.UserViewModel
 import dev.aaa1115910.bv.viewmodel.home.DynamicViewModel
 import dev.aaa1115910.bv.viewmodel.home.HomeRow
+import dev.aaa1115910.bv.viewmodel.home.HomeRowLoader
 import dev.aaa1115910.bv.viewmodel.home.PopularViewModel
 import dev.aaa1115910.bv.viewmodel.home.RecommendViewModel
 import dev.aaa1115910.bv.viewmodel.home.homeRows
@@ -58,7 +59,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 
 /** 焦点停留多久后才切换头部内容。 */
@@ -90,7 +90,7 @@ fun HomeContent(
     val columnState = rememberLazyListState()
     val rowStates = remember { HomeRow.entries.associateWith { LazyListState() } }
     val rowFirstCards = remember { HomeRow.entries.associateWith { FocusRequester() } }
-    val loadJobs = remember { mutableMapOf<HomeRow, Job>() }
+    val rowLoader = remember(scope) { HomeRowLoader(scope) }
     val headerState = remember { FeaturedHeaderState() }
     // 只在回调中读写，避免焦点移动引起整页重组
     val focusedRowIndex = remember { mutableIntStateOf(0) }
@@ -114,25 +114,24 @@ fun HomeContent(
         followingCount = dynamicViewModel.dynamicVideoList.size
     )
 
-    val loadMore: (HomeRow) -> Unit = { row ->
-        if (loadJobs[row]?.isActive != true) {
-            loadJobs[row] = scope.launch(Dispatchers.IO) {
-                when (row) {
-                    HomeRow.Recommend -> recommendViewModel.loadMore()
-                    HomeRow.Following -> dynamicViewModel.loadMoreVideo()
-                    HomeRow.Popular -> popularViewModel.loadMore()
-                }
-            }
+    val loadRow: suspend (HomeRow) -> Unit = { row ->
+        when (row) {
+            HomeRow.Recommend -> recommendViewModel.loadMore()
+            HomeRow.Following -> dynamicViewModel.loadMoreVideo()
+            HomeRow.Popular -> popularViewModel.loadMore()
         }
     }
+    val loadMore: (HomeRow) -> Job = { row -> rowLoader.loadMore(row, Dispatchers.IO) { loadRow(row) } }
 
     //启动时刷新数据：先加载推荐，完成后再加载热门和动态
     LaunchedEffect(Unit) {
         scope.launch(Dispatchers.IO) {
             userViewModel.updateUserInfo()
         }
-        loadJobs[HomeRow.Recommend] = scope.launch {
-            withContext(Dispatchers.IO) { recommendViewModel.loadMore() }
+        val recommendJob = loadMore(HomeRow.Recommend)
+        // 推荐加载结束（或被刷新取消）后再加载热门和动态
+        scope.launch {
+            recommendJob.join()
             loadMore(HomeRow.Popular)
             loadMore(HomeRow.Following)
         }
@@ -166,11 +165,15 @@ fun HomeContent(
         if (reloadKey == handledReloadKey) return@LaunchedEffect
         handledReloadKey = reloadKey
         logger.fInfo { "reload recommend data" }
-        recommendViewModel.clearData()
         headerState.reset()
         columnState.scrollToItem(0)
         rowStates.getValue(HomeRow.Recommend).scrollToItem(0)
-        loadMore(HomeRow.Recommend)
+        // 先取消并等待进行中的推荐加载，避免旧请求的结果落进清空后的列表
+        rowLoader.reload(
+            row = HomeRow.Recommend,
+            context = Dispatchers.IO,
+            reset = { recommendViewModel.clearData() }
+        ) { loadRow(HomeRow.Recommend) }
     }
 
     BackHandler(contentHasFocus) {
