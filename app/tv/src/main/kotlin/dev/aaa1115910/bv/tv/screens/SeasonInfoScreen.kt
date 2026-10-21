@@ -241,7 +241,9 @@ fun SeasonInfoScreen(
                 return@onPlay
             }
 
-            val progress = seasonViewModel.lastPlayProgress?.takeIf { it.lastEpId == playEpisode.id }
+            // 仅在继续播放同一集且未看完时使用进度；已看完（lastTime < 0）时播放的是下一集，从头开始
+            val progress = seasonViewModel.lastPlayProgress
+                ?.takeIf { it.lastEpId == playEpisode.id && it.lastTime >= 0 }
             logger.fInfo { "Play aid: ${playEpisode.aid}, cid: ${playEpisode.cid}, resume: $progress" }
             onClickVideo(
                 playEpisode.aid,

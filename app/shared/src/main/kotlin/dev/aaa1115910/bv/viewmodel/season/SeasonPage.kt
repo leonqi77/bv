@@ -42,8 +42,19 @@ fun playButtonState(
     val first = detail.episodes.firstOrNull()
         ?: detail.sections.firstOrNull { it.episodes.isNotEmpty() }?.episodes?.first()
         ?: return PlayButtonState("还没有正片", false, null) // 同 season_no_feature_film 字符串资源
-    val resumed = progress?.let { p ->
-        (detail.episodes + detail.sections.flatMap { it.episodes }).firstOrNull { it.id == p.lastEpId }
+    // 最后观看剧集所在的列表：正片，或其所属的相关视频分区
+    val resumedList = progress?.let { p ->
+        if (detail.episodes.any { it.id == p.lastEpId }) detail.episodes
+        else detail.sections.firstOrNull { s -> s.episodes.any { it.id == p.lastEpId } }?.episodes
+    }
+    val resumed = resumedList?.firstOrNull { it.id == progress.lastEpId }
+    if (resumed != null && progress != null && progress.lastTime < 0) {
+        // lastTime < 0 表示已看完：播放同一列表中的下一集；已是最后一集则回到第一集（优先正片）
+        val index = resumedList.indexOf(resumed)
+        val next = resumedList.getOrNull(index + 1)
+            ?: detail.episodes.firstOrNull()
+            ?: resumedList.first()
+        return PlayButtonState("播放 ${episodeLabel(next)}", true, next.id)
     }
     if (resumed != null && progress != null) {
         val remainingSec = resumed.duration / 1000.0 - progress.lastTime
