@@ -77,6 +77,7 @@ fun MainScreen(
     val ugcFocusRequester = remember { FocusRequester() }
     val pgcFocusRequester = remember { FocusRequester() }
     val searchFocusRequester = remember { FocusRequester() }
+    val drawerFocusRequester = remember { FocusRequester() }
 
     val handleBack = {
         val currentTime = System.currentTimeMillis()
@@ -129,6 +130,7 @@ fun MainScreen(
                 },
                 onFocusToContent = onFocusToContent,
                 onReselect = { if (it == DrawerItem.Home) homeReloadKey++ },
+                itemsFocusRequester = drawerFocusRequester,
                 onLogin = {
                     context.startActivity(Intent(context, LoginActivity::class.java))
                 }
@@ -156,7 +158,8 @@ fun MainScreen(
                 when (screen) {
                     DrawerItem.Home -> HomeContent(
                         navFocusRequester = mainFocusRequester,
-                        reloadKey = homeReloadKey
+                        reloadKey = homeReloadKey,
+                        onFocusToNav = { drawerFocusRequester.requestFocus() }
                     )
                     DrawerItem.UGC -> UgcContent(navFocusRequester = ugcFocusRequester)
                     DrawerItem.PGC -> PgcContent(navFocusRequester = pgcFocusRequester)

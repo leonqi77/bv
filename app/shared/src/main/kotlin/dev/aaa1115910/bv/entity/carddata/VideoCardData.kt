@@ -24,12 +24,8 @@ data class VideoCardData(
     val upFace: String = "",
 ) {
     init {
-        play?.let {
-            playString = if (it >= 10000) "${it / 10000}万" else "$it"
-        }
-        danmaku?.let {
-            danmakuString = if (it >= 10000) "${it / 10000}万" else "$it"
-        }
+        play?.let { playString = it.formatCount() }
+        danmaku?.let { danmakuString = it.formatCount() }
         time?.let {
             timeString = if (it > 0) it.formatHourMinSec() else ""
         }
@@ -48,6 +44,9 @@ fun VideoCardData.metaLine(
     val playText = if (playString.isNotBlank()) "${playString}播放" else ""
     return listOf(upName, playText, timeText).filter { it.isNotBlank() }.joinToString(" · ")
 }
+
+/** 卡片计数文字：满 1 万显示为 N万。 */
+fun Int.formatCount(): String = if (this >= 10000) "${this / 10000}万" else "$this"
 
 /** 未知计数（接口返回 -1）转为 null，避免卡片显示 "-1播放"。 */
 fun Int.takeIfKnownCount(): Int? = takeIf { it >= 0 }

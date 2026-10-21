@@ -130,16 +130,6 @@ interface TopNavItem {
     fun getDisplayName(context: Context = BVApp.context): String
 }
 
-enum class HomeTopNavItem(private val displayName: String) : TopNavItem {
-    Recommend("推荐"),
-    Popular("热门"),
-    Dynamics("动态");
-
-    override fun getDisplayName(context: Context): String {
-        return displayName
-    }
-}
-
 enum class UgcTopNavItem(private val ugcType: UgcTypeV2) : TopNavItem {
     Douga(UgcTypeV2.Douga),
     Game(UgcTypeV2.Game),
