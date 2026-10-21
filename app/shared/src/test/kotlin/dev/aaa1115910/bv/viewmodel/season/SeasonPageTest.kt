@@ -82,6 +82,23 @@ class SeasonPageTest {
     }
 
     @Test
+    fun resumeFromSectionEpisode() {
+        val pv = ep(77, "PV1")
+        assertEquals(
+            PlayButtonState("继续播放 PV1 · 剩 12 分钟", true, pv.id),
+            playButtonState(detail(eps = eps, sections = listOf(Section(1, "s", listOf(pv)))), progress(pv.id, 665), 0)
+        )
+    }
+
+    @Test
+    fun noFeatureFilm() {
+        assertEquals(
+            PlayButtonState("还没有正片", false, null),
+            playButtonState(detail(eps = emptyList()), null, 0)
+        )
+    }
+
+    @Test
     fun pvTitleUsedAsIs() {
         val pv = ep(77, "PV1")
         assertEquals(PlayButtonState("播放 PV1", true, pv.id), playButtonState(detail(eps = listOf(pv)), null, 0))

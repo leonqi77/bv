@@ -38,10 +38,12 @@ fun playButtonState(
     val first = detail.episodes.firstOrNull()
         ?: detail.sections.firstOrNull { it.episodes.isNotEmpty() }?.episodes?.first()
     if (first == null) {
-        val text = if (hiddenPaidEpisodeCount > 0) "正片均需大会员或付费观看" else "暂无可播放内容"
+        val text = if (hiddenPaidEpisodeCount > 0) "正片均需大会员或付费观看" else "还没有正片" // 同 season_no_feature_film 字符串资源
         return PlayButtonState(text, false, null)
     }
-    val resumed = progress?.let { p -> detail.episodes.firstOrNull { it.id == p.lastEpId } }
+    val resumed = progress?.let { p ->
+        (detail.episodes + detail.sections.flatMap { it.episodes }).firstOrNull { it.id == p.lastEpId }
+    }
     if (resumed != null && progress != null) {
         val remainingSec = resumed.duration / 1000.0 - progress.lastTime
         val minutes = max(1, ceil(remainingSec / 60.0).toInt())
