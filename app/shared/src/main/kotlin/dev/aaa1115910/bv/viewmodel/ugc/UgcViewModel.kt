@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 abstract class UgcViewModel(
-    open val ugcRepository: UgcRepository,
+    val ugcRepository: UgcRepository,
     val ugcType: UgcTypeV2
 ) : ViewModel() {
     private val logger = KotlinLogging.logger("UgvViewModel[$ugcType]")
