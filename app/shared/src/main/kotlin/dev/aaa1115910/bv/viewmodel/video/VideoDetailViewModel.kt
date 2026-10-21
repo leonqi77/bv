@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import dev.aaa1115910.biliapi.entity.video.VideoDetail
 import dev.aaa1115910.biliapi.repositories.VideoDetailRepository
 import dev.aaa1115910.bv.entity.carddata.VideoCardData
+import dev.aaa1115910.bv.entity.carddata.takeIfKnownCount
 import dev.aaa1115910.bv.player.entity.VideoListItem
 import dev.aaa1115910.bv.player.entity.VideoListPart
 import dev.aaa1115910.bv.player.entity.VideoListUgcEpisode
@@ -77,8 +78,8 @@ class VideoDetailViewModel(
                 cover = it.cover,
                 upName = it.author?.name ?: "",
                 time = it.duration * 1000L,
-                play = it.view,
-                danmaku = it.danmaku,
+                play = it.view.takeIfKnownCount(),
+                danmaku = it.danmaku.takeIfKnownCount(),
                 jumpToSeason = it.jumpToSeason,
                 epId = it.epid
             )

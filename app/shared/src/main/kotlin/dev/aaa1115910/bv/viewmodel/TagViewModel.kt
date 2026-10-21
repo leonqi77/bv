@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.aaa1115910.biliapi.http.BiliHttpApi
 import dev.aaa1115910.bv.entity.carddata.VideoCardData
+import dev.aaa1115910.bv.entity.carddata.takeIfKnownCount
 import dev.aaa1115910.bv.util.addWithMainContext
 import dev.aaa1115910.bv.util.fInfo
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -62,8 +63,8 @@ class TagViewModel : ViewModel() {
                         title = tagVideoItem.title,
                         cover = tagVideoItem.pic,
                         upName = tagVideoItem.owner.name,
-                        play = tagVideoItem.stat.view,
-                        danmaku = tagVideoItem.stat.danmaku,
+                        play = tagVideoItem.stat.view.takeIfKnownCount(),
+                        danmaku = tagVideoItem.stat.danmaku.takeIfKnownCount(),
                         time = tagVideoItem.duration.toLong()
                     )
                 )

@@ -52,6 +52,7 @@ import dev.aaa1115910.bv.tv.component.videocard.SeasonCard
 import dev.aaa1115910.bv.tv.component.videocard.SmallVideoCard
 import dev.aaa1115910.bv.entity.carddata.SeasonCardData
 import dev.aaa1115910.bv.entity.carddata.VideoCardData
+import dev.aaa1115910.bv.entity.carddata.toPubTimeOrNull
 import dev.aaa1115910.bv.entity.proxy.ProxyArea
 import dev.aaa1115910.bv.tv.activities.video.SeasonInfoActivity
 import dev.aaa1115910.bv.tv.activities.video.UpInfoActivity
@@ -311,7 +312,7 @@ private fun SearchResultListItem(
                     cover = searchResult.cover,
                     upName = searchResult.author,
                     time = searchResult.duration * 1000L,
-                    pubTime = searchResult.pubDate.takeIf { it > 0 }
+                    pubTime = searchResult.pubDate.toPubTimeOrNull()
                 ),
                 onClick = onClick,
                 onLongClick = onLongClick,
