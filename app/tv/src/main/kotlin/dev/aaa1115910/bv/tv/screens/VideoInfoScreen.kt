@@ -884,18 +884,17 @@ fun VideoInfoData(
                     CompositionLocalProvider(
                         LocalTextStyle provides MaterialTheme.typography.labelMedium
                     ) {
-                        Text(text = "${videoDetail.stat.like} 点赞")
-                        Text(text = "·")
-                        Text(text = "${videoDetail.stat.coin} 投币")
-                        Text(text = "·")
-                        Text(text = "${videoDetail.stat.favorite} 收藏")
-                        Text(text = "·")
-                        Text(text = formatRelativeTime(videoDetail.publishDate.time / 1000))
-                        val qualityLabel = (videoDetail.pages.find { it.cid == videoDetail.cid }
-                            ?: videoDetail.pages.firstOrNull())?.dimension?.qualityLabel
-                        if (!qualityLabel.isNullOrEmpty()) {
-                            Text(text = "·")
-                            Text(text = qualityLabel)
+                        val infoParts = listOf(
+                            "${videoDetail.stat.like} 点赞",
+                            "${videoDetail.stat.coin} 投币",
+                            "${videoDetail.stat.favorite} 收藏",
+                            formatRelativeTime(videoDetail.publishDate.time / 1000),
+                            (videoDetail.pages.find { it.cid == videoDetail.cid }
+                                ?: videoDetail.pages.firstOrNull())?.dimension?.qualityLabel.orEmpty()
+                        ).filter { it.isNotBlank() }
+                        infoParts.forEachIndexed { index, part ->
+                            if (index > 0) Text(text = "·")
+                            Text(text = part)
                         }
                     }
                 }
