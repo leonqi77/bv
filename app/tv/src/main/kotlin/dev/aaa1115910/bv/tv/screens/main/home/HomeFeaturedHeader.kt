@@ -49,15 +49,16 @@ val HomeFeaturedHeaderHeight = 248.dp
 /** 头部文字与分行卡片共用的左侧起点。 */
 val HomeContentStartPadding = 28.dp
 
-private val coverHorizontalFade = Brush.horizontalGradient(
-    0f to BvColors.Background,
-    0.19f to BvColors.Background.copy(alpha = 0.8f),
+// 渐隐到页面底色（随主题），深色主题下即 BvColors.Background
+private fun coverHorizontalFade(background: Color) = Brush.horizontalGradient(
+    0f to background,
+    0.19f to background.copy(alpha = 0.8f),
     0.63f to Color.Transparent
 )
 
-private val coverBottomFade = Brush.verticalGradient(
+private fun coverBottomFade(background: Color) = Brush.verticalGradient(
     0.6f to Color.Transparent,
-    1f to BvColors.Background
+    1f to background
 )
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -103,11 +104,14 @@ private fun HeaderContent(item: HomeFeaturedItem) {
                     contentScale = ContentScale.Crop
                 )
             }
+            val background = MaterialTheme.colorScheme.surface
+            val horizontalFade = remember(background) { coverHorizontalFade(background) }
+            val bottomFade = remember(background) { coverBottomFade(background) }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(coverHorizontalFade)
-                    .background(coverBottomFade)
+                    .background(horizontalFade)
+                    .background(bottomFade)
             )
         }
 
@@ -122,7 +126,7 @@ private fun HeaderContent(item: HomeFeaturedItem) {
                 text = item.title,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = BvColors.TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -142,7 +146,7 @@ private fun HeaderContent(item: HomeFeaturedItem) {
                 Text(
                     text = statsText,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = BvColors.TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1
                 )
             }
@@ -150,7 +154,7 @@ private fun HeaderContent(item: HomeFeaturedItem) {
                 Text(
                     text = item.description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = BvColors.TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -176,12 +180,12 @@ private fun HeaderUp(upName: String, upFace: String) {
                 contentScale = ContentScale.Crop
             )
         } else {
-            UpIcon(color = BvColors.TextSecondary)
+            UpIcon(color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Text(
             text = upName,
             style = MaterialTheme.typography.bodyMedium,
-            color = BvColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

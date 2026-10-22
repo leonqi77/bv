@@ -10,8 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
+import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import dev.aaa1115910.bv.ui.theme.BvColors
 
 /** 列表加载完成后仍为空时显示：图标 + 一行提示。 */
 @Composable
@@ -28,8 +28,8 @@ fun EmptyState(
             modifier = Modifier.size(48.dp),
             imageVector = Icons.Rounded.Inbox,
             contentDescription = null,
-            tint = BvColors.TextSecondary
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Text(text = text, color = BvColors.TextSecondary)
+        Text(text = text, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

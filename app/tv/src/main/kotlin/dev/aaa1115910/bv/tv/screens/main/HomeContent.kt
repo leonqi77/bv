@@ -33,6 +33,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.tv.material3.MaterialTheme
 import dev.aaa1115910.biliapi.entity.ugc.UgcItem
 import dev.aaa1115910.biliapi.entity.user.DynamicVideo
 import dev.aaa1115910.bv.entity.carddata.HomeFeaturedItem
@@ -45,7 +46,6 @@ import dev.aaa1115910.bv.tv.screens.main.home.HomeFeaturedHeader
 import dev.aaa1115910.bv.tv.screens.main.home.HomeFeaturedHeaderHeight
 import dev.aaa1115910.bv.tv.screens.main.home.HomeVideoRow
 import dev.aaa1115910.bv.tv.screens.main.home.HomeVideoRowCardTop
-import dev.aaa1115910.bv.ui.theme.BvColors
 import dev.aaa1115910.bv.util.fInfo
 import dev.aaa1115910.bv.viewmodel.UserViewModel
 import dev.aaa1115910.bv.viewmodel.home.DynamicViewModel
@@ -206,7 +206,7 @@ fun HomeContent(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(BvColors.Background)
+            .background(MaterialTheme.colorScheme.surface)
             .onFocusChanged {
                 contentHasFocus = it.hasFocus
                 if (it.hasFocus) everFocused = true
