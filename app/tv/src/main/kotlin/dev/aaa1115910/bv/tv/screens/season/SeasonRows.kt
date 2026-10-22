@@ -179,7 +179,7 @@ fun SeasonEpisodeRow(
                                 episode.cid,
                                 episode.id,
                                 episode.playerTitle(),
-                                if (episode.id == lastPlayedId) lastPlayedTime else 0
+                                if (episode.id == lastPlayedId) lastPlayedTime.coerceAtLeast(0) else 0
                             )
                         }
                     )
