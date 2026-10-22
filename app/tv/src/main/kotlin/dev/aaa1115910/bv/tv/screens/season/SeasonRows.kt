@@ -110,15 +110,27 @@ fun SeasonEpisodeRow(
                 color = BvColors.TextPrimary
             )
             if (ranges.isNotEmpty()) {
-                // 分段很多时（例如上千集）可横向滚动
+                // 分段很多时（例如上千集）可横向滚动；打开时滚到选中的分段，
+                // 从上方进入分段行时焦点落在选中的分段上，而不是正下方的任意一个
+                val selectedChipFocusRequester = remember { FocusRequester() }
+                val chipRowState = rememberLazyListState(
+                    initialFirstVisibleItemIndex = (selectedRange - 1).coerceAtLeast(0)
+                )
                 LazyRow(
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(end = SeasonContentStartPadding),
+                    modifier = Modifier
+                        .weight(1f)
+                        .focusRestorer(selectedChipFocusRequester),
+                    state = chipRowState,
+                    contentPadding = PaddingValues(start = 4.dp, end = SeasonContentStartPadding),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     itemsIndexed(items = ranges) { index, r ->
                         RangeChip(
+                            modifier = Modifier.ifElse(
+                                index == selectedRange,
+                                Modifier.focusRequester(selectedChipFocusRequester)
+                            ),
                             text = "${r.first}–${r.last}",
                             selected = index == selectedRange,
                             onClick = { selectedRange = index }
@@ -196,12 +208,14 @@ private fun watchProgress(lastTime: Int, durationMs: Int): Float? {
 
 @Composable
 private fun RangeChip(
+    modifier: Modifier = Modifier,
     text: String,
     selected: Boolean,
     onClick: () -> Unit
 ) {
     val shape = RoundedCornerShape(50)
     Surface(
+        modifier = modifier,
         onClick = onClick,
         shape = ClickableSurfaceDefaults.shape(shape = shape),
         colors = ClickableSurfaceDefaults.colors(
