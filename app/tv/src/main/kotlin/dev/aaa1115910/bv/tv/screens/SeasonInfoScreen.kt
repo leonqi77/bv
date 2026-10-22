@@ -175,6 +175,7 @@ fun SeasonInfoScreen(
                     modifier = Modifier
                         .size(120.dp)
                         .align(Alignment.Center),
+                    color = BvColors.Accent,
                 )
             } else {
                 Text(

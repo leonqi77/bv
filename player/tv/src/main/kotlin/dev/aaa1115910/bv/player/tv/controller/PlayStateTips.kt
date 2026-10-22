@@ -114,7 +114,8 @@ fun BufferingTip(
     speed: String
 ) {
     LoadingIndicator(
-        modifier = modifier.size(120.dp)
+        modifier = modifier.size(120.dp),
+        color = PlayerColors.Accent
     )
 }
 

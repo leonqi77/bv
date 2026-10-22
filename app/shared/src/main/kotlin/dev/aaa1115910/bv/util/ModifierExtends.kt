@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 
@@ -27,7 +28,8 @@ import androidx.tv.material3.MaterialTheme
  */
 fun Modifier.focusedBorder(
     shape: Shape = ShapeDefaults.Large,
-    animate: Boolean = false
+    animate: Boolean = false,
+    width: Dp = 3.dp
 ): Modifier = composed {
     val infiniteTransition = rememberInfiniteTransition(label = "infinite border color transition")
     var hasFocus by remember { mutableStateOf(false) }
@@ -47,7 +49,7 @@ fun Modifier.focusedBorder(
 
     onFocusChanged { hasFocus = it.hasFocus }
         .border(
-            width = 3.dp,
+            width = width,
             color = borderColor,
             shape = shape
         )

@@ -86,8 +86,11 @@ fun CarouselContent(
         itemCount = data.size,
         modifier = modifier
             .height(240.dp)
-            .clip(MaterialTheme.shapes.large)
-            .focusedBorder(),
+            .clip(MaterialTheme.shapes.medium)
+            .focusedBorder(
+                shape = MaterialTheme.shapes.medium,
+                width = BvCardDefaults.focusedBorder().border.width
+            ),
         onClick = { itemIndex ->
             onClick(data[itemIndex])
         }

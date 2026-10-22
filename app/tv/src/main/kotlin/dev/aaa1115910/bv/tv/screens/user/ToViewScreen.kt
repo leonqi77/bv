@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Scaffold
@@ -27,9 +29,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Text
 import dev.aaa1115910.bv.R
-import dev.aaa1115910.bv.tv.component.videocard.SmallVideoCard
 import dev.aaa1115910.bv.entity.proxy.ProxyArea
 import dev.aaa1115910.bv.tv.activities.video.VideoInfoActivity
+import dev.aaa1115910.bv.tv.component.EmptyState
+import dev.aaa1115910.bv.tv.component.videocard.SmallVideoCard
 import dev.aaa1115910.bv.viewmodel.user.ToViewViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -50,6 +53,8 @@ fun ToViewScreen(
         ToViewViewModel.update()
     }
 
+    val showEmpty = ToViewViewModel.noMore && ToViewViewModel.histories.isEmpty()
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -65,7 +70,9 @@ fun ToViewScreen(
                         text = stringResource(R.string.title_activity_toview),
                         fontSize = titleFontSize.sp
                     )
-                    if (ToViewViewModel.noMore) {
+                    if (showEmpty) {
+                        // 空列表不显示“已加载 0 条”
+                    } else if (ToViewViewModel.noMore) {
                         Text(
                             text = stringResource(
                                 R.string.load_data_count_no_more,
@@ -114,6 +121,18 @@ fun ToViewScreen(
                             // }
                         }
                     )
+                }
+            }
+            if (showEmpty) {
+                item(span = { GridItemSpan(4) }) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(280.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        EmptyState(text = stringResource(R.string.empty_generic))
+                    }
                 }
             }
         }

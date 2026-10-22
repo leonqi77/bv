@@ -32,7 +32,7 @@ class TagViewModel : ViewModel() {
     private var total = -1
 
     private var updating = false
-    var noMore = false
+    var noMore by mutableStateOf(false)
 
     fun update() {
         viewModelScope.launch(Dispatchers.Default) {

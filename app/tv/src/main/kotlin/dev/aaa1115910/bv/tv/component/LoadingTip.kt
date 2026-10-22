@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.aaa1115910.bv.ui.theme.BVTheme
+import dev.aaa1115910.bv.ui.theme.BvColors
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -24,8 +25,8 @@ fun LoadingTip(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         LoadingIndicator(
-            modifier = Modifier.size(60.dp)
-        )
+            modifier = Modifier.size(60.dp),
+            color = BvColors.Accent        )
     }
 }
 

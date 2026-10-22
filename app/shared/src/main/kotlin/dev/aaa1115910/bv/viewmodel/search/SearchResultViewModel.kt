@@ -44,12 +44,17 @@ class SearchResultViewModel(
     var selectedPartition: Partition? by mutableStateOf(null)
     var selectedChildPartition: Partition? by mutableStateOf(null)
 
+    /** 已经至少加载完成一次的结果类型，用于区分“还在加载”和“确实没有结果” */
+    var loadedTypes by mutableStateOf(emptySet<SearchType>())
+        private set
+
     private var updating = false
     val hasMore = true
 
     var enableProxySearchResult = false
 
     fun update() {
+        loadedTypes = emptySet()
         resetPages()
         clearResults()
         SearchType.entries.forEach { loadMore(it, true) }
@@ -97,6 +102,7 @@ class SearchResultViewModel(
                     enableProxy = enableProxySearchResult
                 )
                 withContext(Dispatchers.Main) {
+                    loadedTypes = loadedTypes + searchType
                     when (searchType) {
                         SearchType.Video -> {
                             videoSearchResult =
