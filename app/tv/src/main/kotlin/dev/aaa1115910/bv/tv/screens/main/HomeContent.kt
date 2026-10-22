@@ -200,7 +200,10 @@ fun HomeContent(
             scope.launch {
                 columnState.scrollToItem(0)
                 rowStates.getValue(HomeRow.Recommend).scrollToItem(0)
-                focusFirstCard(rowFirstCards.getValue(HomeRow.Recommend))
+                if (!focusFirstCard(rowFirstCards.getValue(HomeRow.Recommend))) {
+                    logger.fInfo { "onBack: top row has no card, focus side menu" }
+                    onFocusToNav()
+                }
             }
         } else {
             logger.fInfo { "onBack: focus side menu" }
@@ -347,12 +350,13 @@ private fun FeaturedHeaderHost(
     HomeFeaturedHeader(item = state.shown ?: firstRecommend)
 }
 
-/** 等待分行完成布局后再把焦点移到第一张卡片，最多重试几帧。 */
-private suspend fun focusFirstCard(focusRequester: FocusRequester) {
+/** 等待分行完成布局后再把焦点移到第一张卡片，最多重试几帧；始终没有可聚焦的卡片（如分行为空）返回 false。 */
+private suspend fun focusFirstCard(focusRequester: FocusRequester): Boolean {
     repeat(5) {
         withFrameNanos { }
-        if (runCatching { focusRequester.requestFocus() }.isSuccess) return
+        if (runCatching { focusRequester.requestFocus() }.getOrDefault(false)) return true
     }
+    return false
 }
 
 private fun UgcItem.toVideoCardData() = VideoCardData(
