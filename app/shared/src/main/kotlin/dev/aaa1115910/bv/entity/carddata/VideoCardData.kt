@@ -2,6 +2,7 @@ package dev.aaa1115910.bv.entity.carddata
 
 import dev.aaa1115910.bv.util.formatHourMinSec
 import dev.aaa1115910.bv.util.formatRelativeTime
+import java.text.SimpleDateFormat
 import java.util.TimeZone
 
 data class VideoCardData(
@@ -30,7 +31,8 @@ data class VideoCardData(
             timeString = if (it > 0) it.formatHourMinSec() else ""
         }
         pubTime?.let {
-            pubTimeString = formatRelativeTime(it.toLong())
+            pubTimeString =
+                if (it > 0) SimpleDateFormat("yyyy-MM-dd").format(java.util.Date(it * 1000L)) else ""
         }
     }
 }
