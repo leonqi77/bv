@@ -12,7 +12,9 @@ data class RelatedVideo(
     val jumpToSeason: Boolean,
     val epid: Int?,
     val view: Int,
-    val danmaku: Int
+    val danmaku: Int,
+    /** 发布时间（秒级时间戳），接口未提供时为 null */
+    val pubTime: Int? = null
 ) {
     companion object {
         fun fromRelate(relate: bilibili.app.view.v1.Relate) = RelatedVideo(
@@ -39,7 +41,8 @@ data class RelatedVideo(
                 jumpToSeason = false,
                 epid = null,
                 view = relate.stat.view,
-                danmaku = relate.stat.danmaku
+                danmaku = relate.stat.danmaku,
+                pubTime = relate.pubdate.takeIf { it > 0 }
             )
     }
 }

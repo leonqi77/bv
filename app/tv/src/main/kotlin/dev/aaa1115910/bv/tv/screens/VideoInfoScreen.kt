@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -36,6 +37,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Done
@@ -95,6 +97,7 @@ import androidx.tv.material3.LocalContentColor
 import androidx.tv.material3.LocalTextStyle
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.SuggestionChip
+import androidx.tv.material3.SuggestionChipDefaults
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Tab
@@ -132,15 +135,17 @@ import dev.aaa1115910.bv.tv.component.videocard.VideosRow
 import dev.aaa1115910.bv.tv.util.launchPlayerActivity
 import dev.aaa1115910.bv.ui.theme.BVTheme
 import dev.aaa1115910.bv.ui.theme.BvColors
+import dev.aaa1115910.bv.util.ImageSize
 import dev.aaa1115910.bv.util.Prefs
 import dev.aaa1115910.bv.util.fDebug
 import dev.aaa1115910.bv.util.fInfo
 import dev.aaa1115910.bv.util.fWarn
 import dev.aaa1115910.bv.util.focusedBorder
-import dev.aaa1115910.bv.util.formatPubTimeString
+import dev.aaa1115910.bv.util.formatRelativeTime
 import dev.aaa1115910.bv.util.ifElse
 import dev.aaa1115910.bv.util.onBackPressed
 import dev.aaa1115910.bv.util.requestFocus
+import dev.aaa1115910.bv.util.resizedImageUrl
 import dev.aaa1115910.bv.util.swapList
 import dev.aaa1115910.bv.util.swapListWithMainContext
 import dev.aaa1115910.bv.util.toast
@@ -885,7 +890,7 @@ fun VideoInfoData(
                         Text(text = "·")
                         Text(text = "${videoDetail.stat.favorite} 收藏")
                         Text(text = "·")
-                        Text(text = videoDetail.publishDate.formatPubTimeString())
+                        Text(text = formatRelativeTime(videoDetail.publishDate.time / 1000))
                         val qualityLabel = (videoDetail.pages.find { it.cid == videoDetail.cid }
                             ?: videoDetail.pages.firstOrNull())?.dimension?.qualityLabel
                         if (!qualityLabel.isNullOrEmpty()) {
@@ -899,6 +904,7 @@ fun VideoInfoData(
                 ) {
                     UpButton(
                         name = videoDetail.author.name,
+                        face = videoDetail.author.face,
                         followed = isFollowing,
                         showFollowButton = showFollowButton,
                         onClickUp = onClickUp,
@@ -926,9 +932,17 @@ fun VideoInfoData(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(items = tags) { tag ->
-                        SuggestionChip(onClick = {
-                            onClickTip(tag)
-                        }) {
+                        SuggestionChip(
+                            onClick = { onClickTip(tag) },
+                            colors = SuggestionChipDefaults.colors(
+                                containerColor = BvColors.ChipFill,
+                                contentColor = BvColors.TextPrimary,
+                                focusedContainerColor = BvColors.TextPrimary,
+                                focusedContentColor = BvColors.Background,
+                                pressedContainerColor = BvColors.TextPrimary,
+                                pressedContentColor = BvColors.Background
+                            )
+                        ) {
                             Text(text = tag.name)
                         }
                     }
@@ -942,6 +956,7 @@ fun VideoInfoData(
 private fun UpButton(
     modifier: Modifier = Modifier,
     name: String,
+    face: String = "",
     followed: Boolean,
     showFollowButton: Boolean = false,
     onClickUp: () -> Unit,
@@ -954,51 +969,71 @@ private fun UpButton(
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(2.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .clip(MaterialTheme.shapes.small)
-                .background(Color.White.copy(alpha = 0.2f))
-                .focusedBorder(MaterialTheme.shapes.small)
-                .padding(4.dp)
-                .clickable { onClickUp() },
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            UpIcon(color = Color.White)
-            Text(text = name, color = Color.White)
+        BvChip(onClick = onClickUp) { contentColor ->
+            if (face.isNotBlank()) {
+                AsyncImage(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(CircleShape),
+                    model = face.resizedImageUrl(ImageSize.Avatar),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                UpIcon(color = contentColor)
+            }
+            Text(text = name, color = contentColor)
         }
         AnimatedVisibility(visible = isLogin && showFollowButton) {
-            Row(
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.small)
-                    .background(Color.White.copy(alpha = 0.2f))
-                    .focusedBorder(MaterialTheme.shapes.small)
-                    .padding(horizontal = 4.dp, vertical = 3.dp)
-                    .clickable { if (followed) onDelFollow() else onAddFollow() }
-                    .animateContentSize()
-            ) {
+            BvChip(
+                modifier = Modifier.animateContentSize(),
+                onClick = { if (followed) onDelFollow() else onAddFollow() }
+            ) { contentColor ->
                 if (followed) {
                     Icon(
                         imageVector = Icons.Rounded.Done,
                         contentDescription = null,
-                        tint = Color.White
+                        tint = contentColor
                     )
                     Text(
                         text = stringResource(R.string.video_info_followed),
-                        color = Color.White
+                        color = contentColor
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Rounded.Add,
                         contentDescription = null,
-                        tint = Color.White
+                        tint = contentColor
                     )
-                    Text(text = stringResource(R.string.video_info_follow), color = Color.White)
+                    Text(text = stringResource(R.string.video_info_follow), color = contentColor)
                 }
             }
         }
+    }
+}
+
+/** 按钮/标签通用样式：平时 [BvColors.ChipFill]，聚焦时亮色填充并反色文字。 */
+@Composable
+private fun BvChip(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    content: @Composable RowScope.(contentColor: Color) -> Unit
+) {
+    var focused by remember { mutableStateOf(false) }
+    val contentColor = if (focused) BvColors.Background else BvColors.TextPrimary
+    Row(
+        modifier = modifier
+            .clip(CircleShape)
+            .onFocusChanged { focused = it.hasFocus }
+            .background(if (focused) BvColors.TextPrimary else BvColors.ChipFill)
+            .clickable { onClick() }
+            .padding(horizontal = 10.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        content(contentColor)
     }
 }
 
