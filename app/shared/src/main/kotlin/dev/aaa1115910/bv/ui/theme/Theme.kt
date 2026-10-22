@@ -71,7 +71,40 @@ fun BVTheme(
         borderVariant = Color(0xFF3A3A3C)
     )
     val mobileLightColorScheme = androidx.compose.material3.lightColorScheme()
-    val mobileDarkColorScheme = androidx.compose.material3.darkColorScheme()
+    // 通用 M3 组件（Scaffold、输入框、滑块、弹窗等）同样使用中性深色，不带默认紫色调
+    val mobileDarkColorScheme = androidx.compose.material3.darkColorScheme(
+        primary = BvColors.TextPrimary,
+        onPrimary = BvColors.Background,
+        primaryContainer = Color(0xFF2A2A2C),
+        onPrimaryContainer = BvColors.TextPrimary,
+        inversePrimary = BvColors.Background,
+        secondary = Color(0xFFE0E0E0),
+        onSecondary = BvColors.Background,
+        secondaryContainer = Color(0xFF2A2A2C),
+        onSecondaryContainer = BvColors.TextPrimary,
+        tertiary = Color(0xFFE0E0E0),
+        onTertiary = BvColors.Background,
+        tertiaryContainer = Color(0xFF2A2A2C),
+        onTertiaryContainer = BvColors.TextPrimary,
+        background = BvColors.Background,
+        onBackground = BvColors.TextPrimary,
+        surface = BvColors.Background,
+        onSurface = BvColors.TextPrimary,
+        surfaceVariant = Color(0xFF2A2A2C),
+        onSurfaceVariant = BvColors.TextSecondary,
+        surfaceTint = BvColors.TextPrimary,
+        inverseSurface = BvColors.TextPrimary,
+        inverseOnSurface = BvColors.Background,
+        outline = Color(0xFF6E6E70),
+        outlineVariant = Color(0xFF3A3A3C),
+        surfaceBright = Color(0xFF2A2A2C),
+        surfaceDim = BvColors.Background,
+        surfaceContainerLowest = Color(0xFF0A0A0B),
+        surfaceContainerLow = Color(0xFF161618),
+        surfaceContainer = Color(0xFF1A1A1C),
+        surfaceContainerHigh = Color(0xFF222224),
+        surfaceContainerHighest = Color(0xFF2A2A2C)
+    )
 
     val colorSchemeTv = if (forceDark) tvDarkColorScheme else when (themeType) {
         ThemeType.Auto -> if (darkTheme) tvDarkColorScheme else tvLightColorScheme
