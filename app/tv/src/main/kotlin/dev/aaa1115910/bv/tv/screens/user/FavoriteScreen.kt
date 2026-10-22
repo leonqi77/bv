@@ -42,8 +42,9 @@ import androidx.tv.material3.TabRow
 import androidx.tv.material3.Text
 import dev.aaa1115910.biliapi.entity.FavoriteFolderMetadata
 import dev.aaa1115910.bv.R
-import dev.aaa1115910.bv.tv.component.videocard.SmallVideoCard
 import dev.aaa1115910.bv.tv.activities.video.VideoInfoActivity
+import dev.aaa1115910.bv.tv.component.EmptyState
+import dev.aaa1115910.bv.tv.component.videocard.SmallVideoCard
 import dev.aaa1115910.bv.util.ifElse
 import dev.aaa1115910.bv.viewmodel.user.FavoriteViewModel
 import kotlinx.coroutines.Dispatchers
@@ -91,6 +92,10 @@ fun FavoriteScreen(
         }
     }
 
+    val showEmpty = favoriteViewModel.folderItemsLoaded &&
+            !favoriteViewModel.updatingFolderItems &&
+            favoriteViewModel.favorites.isEmpty()
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -106,13 +111,15 @@ fun FavoriteScreen(
                         text = "${stringResource(R.string.user_homepage_favorite)} - ${favoriteViewModel.currentFavoriteFolderMetadata?.title}",
                         fontSize = titleFontSize.sp
                     )
-                    Text(
-                        text = stringResource(
-                            R.string.load_data_count,
-                            favoriteViewModel.favorites.size
-                        ),
-                        color = Color.White.copy(alpha = 0.6f)
-                    )
+                    if (!showEmpty) {
+                        Text(
+                            text = stringResource(
+                                R.string.load_data_count,
+                                favoriteViewModel.favorites.size
+                            ),
+                            color = Color.White.copy(alpha = 0.6f)
+                        )
+                    }
                 }
             }
         }
@@ -179,6 +186,18 @@ fun FavoriteScreen(
                             }
                         }
                     )
+                }
+            }
+            if (showEmpty) {
+                item(span = { GridItemSpan(4) }) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(280.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        EmptyState(text = stringResource(R.string.empty_generic))
+                    }
                 }
             }
         }

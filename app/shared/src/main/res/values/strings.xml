@@ -93,6 +93,9 @@
     <string name="logout_dialog_title">登出确认</string>
 
     <string name="no_data">无可用数据</string>
+    <string name="empty_following_season">还没有追番</string>
+    <string name="empty_history">还没有历史记录</string>
+    <string name="empty_generic">这里还没有内容</string>
 
     <string name="pgc_home_button_unknown">占位</string>
     <string name="pgc_index_filter_area">地区</string>

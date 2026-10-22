@@ -131,6 +131,7 @@ import dev.aaa1115910.bv.tv.component.buttons.FavoriteButton
 import dev.aaa1115910.bv.tv.component.videocard.VideosRow
 import dev.aaa1115910.bv.tv.util.launchPlayerActivity
 import dev.aaa1115910.bv.ui.theme.BVTheme
+import dev.aaa1115910.bv.ui.theme.BvColors
 import dev.aaa1115910.bv.util.Prefs
 import dev.aaa1115910.bv.util.fDebug
 import dev.aaa1115910.bv.util.fInfo
@@ -146,12 +147,12 @@ import dev.aaa1115910.bv.util.toast
 import dev.aaa1115910.bv.viewmodel.video.VideoDetailViewModel
 import dev.aaa1115910.bv.viewmodel.video.VideoInfoState
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlin.math.ceil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.getKoin
-import kotlin.math.ceil
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -494,6 +495,7 @@ fun VideoInfoScreen(
                     modifier = Modifier
                         .size(120.dp)
                         .align(Alignment.Center),
+                    color = BvColors.Accent,
                 )
             } else {
                 Text(

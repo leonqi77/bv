@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -46,8 +47,9 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import dev.aaa1115910.bv.R
-import dev.aaa1115910.bv.tv.component.LoadingTip
 import dev.aaa1115910.bv.tv.activities.video.UpInfoActivity
+import dev.aaa1115910.bv.tv.component.EmptyState
+import dev.aaa1115910.bv.tv.component.LoadingTip
 import dev.aaa1115910.bv.ui.theme.BVTheme
 import dev.aaa1115910.bv.util.requestFocus
 import dev.aaa1115910.bv.viewmodel.user.FollowViewModel
@@ -95,13 +97,15 @@ fun FollowScreen(
                         text = stringResource(R.string.user_homepage_follow),
                         fontSize = titleFontSize.sp
                     )
-                    Text(
-                        text = stringResource(
-                            R.string.load_data_count,
-                            followViewModel.followedUsers.size
-                        ),
-                        color = Color.White.copy(alpha = 0.6f)
-                    )
+                    if (followViewModel.updating || followViewModel.followedUsers.isNotEmpty()) {
+                        Text(
+                            text = stringResource(
+                                R.string.load_data_count,
+                                followViewModel.followedUsers.size
+                            ),
+                            color = Color.White.copy(alpha = 0.6f)
+                        )
+                    }
                 }
             }
         }
@@ -133,6 +137,18 @@ fun FollowScreen(
                             )
                         }
                     )
+                }
+                if (followViewModel.followedUsers.isEmpty()) {
+                    item(span = { GridItemSpan(3) }) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(280.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            EmptyState(text = stringResource(R.string.empty_generic))
+                        }
+                    }
                 }
             } else {
                 item(

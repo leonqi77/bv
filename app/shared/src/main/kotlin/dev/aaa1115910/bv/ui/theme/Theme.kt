@@ -49,7 +49,26 @@ fun BVTheme(
         onBackground = BvColors.TextPrimary,
         onSurface = BvColors.TextPrimary,
         onSurfaceVariant = BvColors.TextSecondary,
-        border = Color.White
+        border = Color.White,
+        // 去掉 TV Material 默认的紫色系：全部换成中性灰白，粉色只在细节处显式使用
+        primary = BvColors.TextPrimary,
+        onPrimary = BvColors.Background,
+        primaryContainer = Color(0xFF2A2A2C),
+        onPrimaryContainer = BvColors.TextPrimary,
+        inversePrimary = BvColors.Background,
+        secondary = Color(0xFFE0E0E0),
+        onSecondary = BvColors.Background,
+        secondaryContainer = Color(0xFF2A2A2C),
+        onSecondaryContainer = BvColors.TextPrimary,
+        tertiary = Color(0xFFE0E0E0),
+        onTertiary = BvColors.Background,
+        tertiaryContainer = Color(0xFF2A2A2C),
+        onTertiaryContainer = BvColors.TextPrimary,
+        surfaceVariant = Color(0xFF2A2A2C),
+        surfaceTint = BvColors.TextPrimary,
+        inverseSurface = BvColors.TextPrimary,
+        inverseOnSurface = BvColors.Background,
+        borderVariant = Color(0xFF3A3A3C)
     )
     val mobileLightColorScheme = androidx.compose.material3.lightColorScheme()
     val mobileDarkColorScheme = androidx.compose.material3.darkColorScheme()

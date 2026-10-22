@@ -86,6 +86,7 @@ import dev.aaa1115910.bv.tv.activities.video.VideoInfoActivity
 import dev.aaa1115910.bv.tv.component.videocard.SeasonCard
 import dev.aaa1115910.bv.tv.component.videocard.VideosRow
 import dev.aaa1115910.bv.ui.theme.BVTheme
+import dev.aaa1115910.bv.ui.theme.BvColors
 import dev.aaa1115910.bv.util.Prefs
 import dev.aaa1115910.bv.util.fException
 import dev.aaa1115910.bv.util.fInfo
@@ -499,6 +500,7 @@ private fun UserInfo(
                         .fillMaxWidth()
                         .padding(8.dp),
                     progress = { levelSlider },
+                    color = BvColors.Accent,
                 )
             }
         }

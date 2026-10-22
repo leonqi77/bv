@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Scaffold
@@ -48,8 +50,6 @@ import dev.aaa1115910.biliapi.entity.ApiType
 import dev.aaa1115910.biliapi.repositories.SearchType
 import dev.aaa1115910.biliapi.repositories.SearchTypeResult
 import dev.aaa1115910.bv.R
-import dev.aaa1115910.bv.tv.component.videocard.SeasonCard
-import dev.aaa1115910.bv.tv.component.videocard.SmallVideoCard
 import dev.aaa1115910.bv.entity.carddata.SeasonCardData
 import dev.aaa1115910.bv.entity.carddata.VideoCardData
 import dev.aaa1115910.bv.entity.carddata.toPubTimeOrNull
@@ -57,6 +57,9 @@ import dev.aaa1115910.bv.entity.proxy.ProxyArea
 import dev.aaa1115910.bv.tv.activities.video.SeasonInfoActivity
 import dev.aaa1115910.bv.tv.activities.video.UpInfoActivity
 import dev.aaa1115910.bv.tv.activities.video.VideoInfoActivity
+import dev.aaa1115910.bv.tv.component.EmptyState
+import dev.aaa1115910.bv.tv.component.videocard.SeasonCard
+import dev.aaa1115910.bv.tv.component.videocard.SmallVideoCard
 import dev.aaa1115910.bv.tv.screens.user.UpCard
 import dev.aaa1115910.bv.util.Prefs
 import dev.aaa1115910.bv.util.fInfo
@@ -200,13 +203,15 @@ fun SearchResultScreen(
                             text = stringResource(R.string.filter_dialog_open_tip),
                             color = Color.White.copy(alpha = 0.6f)
                         )
-                        Text(
-                            text = stringResource(
-                                R.string.load_data_count,
-                                searchResult.count
-                            ),
-                            color = Color.White.copy(alpha = 0.6f)
-                        )
+                        if (searchResult.count > 0 || searchResult.type !in searchResultViewModel.loadedTypes) {
+                            Text(
+                                text = stringResource(
+                                    R.string.load_data_count,
+                                    searchResult.count
+                                ),
+                                color = Color.White.copy(alpha = 0.6f)
+                            )
+                        }
                     }
                 }
             }
@@ -246,6 +251,15 @@ fun SearchResultScreen(
                 }
             }
 
+            val currentItems = when (searchResult.type) {
+                SearchType.Video -> searchResult.videos
+                SearchType.MediaBangumi -> searchResult.mediaBangumis
+                SearchType.MediaFt -> searchResult.mediaFts
+                SearchType.BiliUser -> searchResult.biliUsers
+            }
+            val showEmpty = currentItems.isEmpty() &&
+                    searchResult.type in searchResultViewModel.loadedTypes
+
             LazyVerticalGrid(
                 modifier = Modifier.onPreviewKeyEvent {
                     when (it.key) {
@@ -261,20 +275,25 @@ fun SearchResultScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 horizontalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                itemsIndexed(
-                    items = when (searchResult.type) {
-                        SearchType.Video -> searchResult.videos
-                        SearchType.MediaBangumi -> searchResult.mediaBangumis
-                        SearchType.MediaFt -> searchResult.mediaFts
-                        SearchType.BiliUser -> searchResult.biliUsers
-                    }
-                ) { index, searchResultItem ->
+                itemsIndexed(items = currentItems) { index, searchResultItem ->
                     SearchResultListItem(
                         searchResult = searchResultItem,
                         onClick = { onClickResult(searchResultItem) },
                         onLongClick = onLongClickSearchResultItem,
                         onFocus = { currentIndex = index }
                     )
+                }
+                if (showEmpty) {
+                    item(span = { GridItemSpan(rowSize) }) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(240.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            EmptyState(text = stringResource(R.string.empty_generic))
+                        }
+                    }
                 }
             }
         }

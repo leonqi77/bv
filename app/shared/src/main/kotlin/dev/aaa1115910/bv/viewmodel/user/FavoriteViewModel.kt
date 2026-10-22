@@ -42,6 +42,9 @@ class FavoriteViewModel(
     var updatingFolders by mutableStateOf(false)
     var updatingFolderItems by mutableStateOf(false)
 
+    /** 至少成功加载过一次收藏夹内容（用于区分“还在加载”和“确实为空”） */
+    var folderItemsLoaded by mutableStateOf(false)
+
     init {
         updateFoldersInfo()
     }
@@ -105,6 +108,7 @@ class FavoriteViewModel(
                     )
                 }
                 hasMore = favoriteFolderData.hasMore
+                folderItemsLoaded = true
                 logger.fInfo { "Update favorite items success" }
             }.onFailure {
                 logger.fInfo { "Update favorite items failed: ${it.stackTraceToString()}" }
