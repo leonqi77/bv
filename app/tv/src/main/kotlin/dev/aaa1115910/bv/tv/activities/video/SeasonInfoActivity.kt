@@ -30,7 +30,10 @@ class SeasonInfoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            BVTheme {
+            // 剧集页自带深色背景图与渐隐，与视频页一样固定使用深色主题
+            BVTheme(
+                forceDark = true
+            ) {
                 SeasonInfoScreen()
             }
         }

@@ -26,7 +26,6 @@ import androidx.tv.material3.Text
 import dev.aaa1115910.bv.entity.carddata.VideoCardData
 import dev.aaa1115910.bv.tv.component.LoadingTip
 import dev.aaa1115910.bv.tv.component.videocard.SmallVideoCard
-import dev.aaa1115910.bv.ui.theme.BvColors
 import dev.aaa1115910.bv.util.ifElse
 
 private val RowTopPadding = 6.dp
@@ -63,7 +62,7 @@ fun HomeVideoRow(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = BvColors.TextPrimary
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
         if (items.isEmpty()) {

@@ -42,7 +42,6 @@ import dev.aaa1115910.bv.entity.carddata.metaLine
 import dev.aaa1115910.bv.tv.component.BvCardDefaults
 import dev.aaa1115910.bv.tv.component.UpIcon
 import dev.aaa1115910.bv.ui.theme.BVTheme
-import dev.aaa1115910.bv.ui.theme.BvColors
 import dev.aaa1115910.bv.util.ImageSize
 import dev.aaa1115910.bv.util.resizedImageUrl
 
@@ -184,13 +183,13 @@ private fun CardInfo(
                 contentScale = ContentScale.Crop
             )
         } else {
-            UpIcon(color = BvColors.TextSecondary)
+            UpIcon(color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Column {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleSmall,
-                color = BvColors.TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -199,7 +198,7 @@ private fun CardInfo(
                     modifier = Modifier.padding(top = 2.dp),
                     text = meta,
                     style = MaterialTheme.typography.labelSmall,
-                    color = BvColors.TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
