@@ -12,7 +12,7 @@ import androidx.tv.material3.CardScale
 import androidx.tv.material3.Glow
 import androidx.tv.material3.MaterialTheme
 
-/** 卡片统一焦点效果：放大 1.06、1.5dp 白色描边（跟随卡片形状）、柔和深色阴影。 */
+/** 卡片统一焦点效果：放大 1.06、2dp 白色描边（跟随卡片形状）、柔和深色阴影。 */
 object BvCardDefaults {
     const val FocusedScale = 1.06f
 
@@ -21,7 +21,7 @@ object BvCardDefaults {
 
     @Composable
     fun focusedBorder(): Border = Border(
-        border = BorderStroke(width = 1.5.dp, color = Color.White),
+        border = BorderStroke(width = 2.dp, color = Color.White),
         shape = MaterialTheme.shapes.medium
     )
 
