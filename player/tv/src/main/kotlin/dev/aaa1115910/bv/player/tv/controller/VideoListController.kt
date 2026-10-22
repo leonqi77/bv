@@ -187,5 +187,6 @@ private fun playlistItemColors() = ListItemDefaults.colors(
     selectedContainerColor = Color.Transparent,
     selectedContentColor = PlayerColors.Accent,
     focusedSelectedContainerColor = PlayerColors.TextPrimary,
-    focusedSelectedContentColor = PlayerColors.Accent
+    // 焦点行背景接近白色，粉色强调色对比不足，改用加深的粉色
+    focusedSelectedContentColor = Color(0xFFB3194F)
 )
