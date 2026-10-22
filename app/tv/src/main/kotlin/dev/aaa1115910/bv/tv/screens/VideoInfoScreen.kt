@@ -97,7 +97,6 @@ import androidx.tv.material3.LocalContentColor
 import androidx.tv.material3.LocalTextStyle
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.SuggestionChip
-import androidx.tv.material3.SuggestionChipDefaults
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Tab
@@ -130,6 +129,7 @@ import dev.aaa1115910.bv.tv.activities.video.UpInfoActivity
 import dev.aaa1115910.bv.tv.activities.video.VideoInfoActivity
 import dev.aaa1115910.bv.tv.component.TvAlertDialog
 import dev.aaa1115910.bv.tv.component.UpIcon
+import dev.aaa1115910.bv.tv.component.BvChipDefaults
 import dev.aaa1115910.bv.tv.component.buttons.FavoriteButton
 import dev.aaa1115910.bv.tv.component.videocard.VideosRow
 import dev.aaa1115910.bv.tv.util.launchPlayerActivity
@@ -934,14 +934,8 @@ fun VideoInfoData(
                     items(items = tags) { tag ->
                         SuggestionChip(
                             onClick = { onClickTip(tag) },
-                            colors = SuggestionChipDefaults.colors(
-                                containerColor = BvColors.ChipFill,
-                                contentColor = BvColors.TextPrimary,
-                                focusedContainerColor = BvColors.TextPrimary,
-                                focusedContentColor = BvColors.Background,
-                                pressedContainerColor = BvColors.TextPrimary,
-                                pressedContentColor = BvColors.Background
-                            )
+                            colors = BvChipDefaults.suggestionColors(),
+                            border = BvChipDefaults.suggestionBorder()
                         ) {
                             Text(text = tag.name)
                         }

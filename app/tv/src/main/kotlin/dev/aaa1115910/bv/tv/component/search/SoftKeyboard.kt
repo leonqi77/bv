@@ -1,5 +1,6 @@
 package dev.aaa1115910.bv.tv.component.search
 
+import dev.aaa1115910.bv.ui.theme.BvColors
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -118,6 +119,13 @@ fun SoftKeyboard(
 }
 
 @Composable
+private fun softKeyColors() = ClickableSurfaceDefaults.colors(
+    containerColor = BvColors.ChipFill,
+    focusedContainerColor = MaterialTheme.colorScheme.inverseSurface,
+    pressedContainerColor = MaterialTheme.colorScheme.inverseSurface
+)
+
+@Composable
 fun SoftKeyboardKey(
     modifier: Modifier = Modifier,
     key: String,
@@ -125,7 +133,8 @@ fun SoftKeyboardKey(
 ) {
     Surface(
         modifier = modifier,
-        onClick = onClick
+        onClick = onClick,
+        colors = softKeyColors()
     ) {
         Box(
             modifier = Modifier.size(38.dp),
@@ -147,7 +156,8 @@ fun SoftKeyboardButton(
 ) {
     Surface(
         modifier = modifier.height(38.dp),
-        onClick = onClick
+        onClick = onClick,
+        colors = softKeyColors()
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),

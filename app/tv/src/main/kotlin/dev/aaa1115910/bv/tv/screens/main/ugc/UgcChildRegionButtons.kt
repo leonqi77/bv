@@ -20,6 +20,7 @@ import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.SuggestionChip
 import androidx.tv.material3.Text
 import dev.aaa1115910.biliapi.entity.ugc.UgcTypeV2
+import dev.aaa1115910.bv.tv.component.BvChipDefaults
 import dev.aaa1115910.bv.ui.theme.BVTheme
 import dev.aaa1115910.bv.util.fInfo
 import dev.aaa1115910.bv.util.getDisplayName
@@ -67,7 +68,9 @@ fun UgcChildRegionButtonsContent(
         itemsIndexed(items = childUgcTypes) { index, ugcType ->
             SuggestionChip(
                 modifier = Modifier.ifElse(index == 0, Modifier.focusRequester(focusRequester)),
-                onClick = { onClickChildRegion(ugcType) }
+                onClick = { onClickChildRegion(ugcType) },
+                colors = BvChipDefaults.suggestionColors(),
+                border = BvChipDefaults.suggestionBorder()
             ) {
                 Text(text = ugcType.getDisplayName(context))
             }
