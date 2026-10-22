@@ -68,7 +68,16 @@ class HomeFeaturedItemTest {
         assertEquals(1700000000L, item.pubTime)
         assertEquals(1492, item.durationSec)
         assertTrue(item.is4K)
-        assertEquals("", item.description)
+        assertEquals(null, item.description)
+    }
+
+    @Test
+    fun fromUgcItemMapsDescription() {
+        val base = UgcItem(
+            aid = 1, title = "t", cover = "c", author = "a", play = 1, danmaku = 1, duration = 1
+        )
+        assertEquals("简介", HomeFeaturedItem.fromUgcItem(base.copy(desc = "  简介 ")).description)
+        assertEquals(null, HomeFeaturedItem.fromUgcItem(base.copy(desc = "   ")).description)
     }
 
     @Test

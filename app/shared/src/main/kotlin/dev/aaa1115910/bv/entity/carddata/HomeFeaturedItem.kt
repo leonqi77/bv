@@ -11,6 +11,7 @@ import java.util.TimeZone
  * @property play 播放量，未知为 null
  * @property pubTime 发布时间（秒），未知为 0
  * @property durationSec 时长（秒），未知为 0
+ * @property description 简介，数据源未提供或为空白时为 null
  */
 data class HomeFeaturedItem(
     val aid: Long,
@@ -22,7 +23,7 @@ data class HomeFeaturedItem(
     val pubTime: Long,
     val durationSec: Int,
     val is4K: Boolean,
-    val description: String = ""
+    val description: String? = null
 ) {
     companion object {
         fun fromUgcItem(item: UgcItem) = HomeFeaturedItem(
@@ -34,7 +35,8 @@ data class HomeFeaturedItem(
             play = item.play.takeIfKnownCount(),
             pubTime = item.pubDate,
             durationSec = item.duration,
-            is4K = item.dimension?.is4K == true
+            is4K = item.dimension?.is4K == true,
+            description = item.desc.trim().ifBlank { null }
         )
 
         fun fromDynamicVideo(video: DynamicVideo) = HomeFeaturedItem(
