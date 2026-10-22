@@ -55,6 +55,7 @@ import dev.aaa1115910.bv.viewmodel.home.PopularViewModel
 import dev.aaa1115910.bv.viewmodel.home.RecommendViewModel
 import dev.aaa1115910.bv.viewmodel.home.homeRows
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -121,7 +122,24 @@ fun HomeContent(
             HomeRow.Popular -> popularViewModel.loadMore()
         }
     }
-    val loadMore: (HomeRow) -> Job = { row -> rowLoader.loadMore(row, Dispatchers.IO) { loadRow(row) } }
+    // 加载被取消时（离开首页使协程作用域取消，或刷新）ViewModel 不会复位自己的加载标记，
+    // 之后该行再也不会加载更多，所以在这里复位
+    val resetLoadingFlag: (HomeRow) -> Unit = { row ->
+        when (row) {
+            HomeRow.Recommend -> recommendViewModel.loading = false
+            HomeRow.Following -> dynamicViewModel.loadingVideo = false
+            HomeRow.Popular -> popularViewModel.loading = false
+        }
+    }
+    val loadRowOrReset: suspend (HomeRow) -> Unit = { row ->
+        try {
+            loadRow(row)
+        } catch (e: CancellationException) {
+            resetLoadingFlag(row)
+            throw e
+        }
+    }
+    val loadMore: (HomeRow) -> Job = { row -> rowLoader.loadMore(row, Dispatchers.IO) { loadRowOrReset(row) } }
 
     //启动时刷新数据：先加载推荐，完成后再加载热门和动态
     LaunchedEffect(Unit) {
@@ -173,7 +191,7 @@ fun HomeContent(
             row = HomeRow.Recommend,
             context = Dispatchers.IO,
             reset = { recommendViewModel.clearData() }
-        ) { loadRow(HomeRow.Recommend) }
+        ) { loadRowOrReset(HomeRow.Recommend) }
     }
 
     BackHandler(contentHasFocus) {
