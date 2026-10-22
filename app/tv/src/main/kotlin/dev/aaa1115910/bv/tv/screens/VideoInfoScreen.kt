@@ -1016,12 +1016,13 @@ private fun BvChip(
     content: @Composable RowScope.(contentColor: Color) -> Unit
 ) {
     var focused by remember { mutableStateOf(false) }
-    val contentColor = if (focused) BvColors.Background else BvColors.TextPrimary
+    val contentColor =
+        if (focused) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface
     Row(
         modifier = modifier
             .clip(CircleShape)
             .onFocusChanged { focused = it.hasFocus }
-            .background(if (focused) BvColors.TextPrimary else BvColors.ChipFill)
+            .background(if (focused) MaterialTheme.colorScheme.onSurface else BvChipDefaults.restingFill())
             .clickable { onClick() }
             .padding(horizontal = 10.dp, vertical = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),

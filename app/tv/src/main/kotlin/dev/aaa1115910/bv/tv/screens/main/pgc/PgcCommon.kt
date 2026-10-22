@@ -1,5 +1,6 @@
 package dev.aaa1115910.bv.tv.screens.main.pgc
 
+import dev.aaa1115910.bv.tv.component.BvChipDefaults
 import android.view.KeyEvent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -388,7 +389,7 @@ fun PgcFeatureButton(
     Surface(
         modifier = modifier,
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = BvColors.ChipFill,
+            containerColor = BvChipDefaults.restingFill(),
             focusedContainerColor = MaterialTheme.colorScheme.inverseSurface,
             pressedContainerColor = MaterialTheme.colorScheme.inverseSurface
         ),
@@ -423,7 +424,7 @@ fun PgcFeatureButton(
     Surface(
         modifier = modifier,
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = BvColors.ChipFill,
+            containerColor = BvChipDefaults.restingFill(),
             focusedContainerColor = MaterialTheme.colorScheme.inverseSurface,
             pressedContainerColor = MaterialTheme.colorScheme.inverseSurface
         ),
