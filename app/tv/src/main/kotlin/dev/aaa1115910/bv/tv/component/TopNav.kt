@@ -29,6 +29,7 @@ import androidx.tv.material3.LocalContentColor
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Tab
 import androidx.tv.material3.TabRow
+import androidx.tv.material3.TabRowDefaults
 import androidx.tv.material3.TabRowScope
 import androidx.tv.material3.Text
 import dev.aaa1115910.biliapi.entity.pgc.PgcType
@@ -80,6 +81,14 @@ fun TopNav(
                 },
             selectedTabIndex = selectedTabIndex,
             separator = { Spacer(modifier = Modifier.width(12.dp)) },
+            indicator = { tabPositions, doesTabRowHaveFocus ->
+                TabRowDefaults.PillIndicator(
+                    currentTabPosition = tabPositions[selectedTabIndex],
+                    doesTabRowHaveFocus = doesTabRowHaveFocus,
+                    activeColor = MaterialTheme.colorScheme.onSurface,
+                    inactiveColor = BvChipDefaults.restingFill()
+                )
+            }
         ) {
             items.forEachIndexed { index, tab ->
                 NavItemTab(
@@ -113,7 +122,8 @@ private fun TabRowScope.NavItemTab(
         modifier = modifier,
         selected = selected,
         onFocus = onFocus,
-        onClick = onClick
+        onClick = onClick,
+        colors = BvChipDefaults.tabColors()
     ) {
         Text(
             modifier = Modifier
