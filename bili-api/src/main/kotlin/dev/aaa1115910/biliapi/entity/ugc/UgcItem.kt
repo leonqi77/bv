@@ -17,7 +17,8 @@ data class UgcItem(
     val idx: Int = -1,
     val dimension: Dimension? = null,
     val authorFace: String = "",
-    val pubDate: Long = 0L
+    val pubDate: Long = 0L,
+    val desc: String = ""
 ) {
     companion object {
         fun fromRcmdItem(rcmdItem: RcmdIndexData.RcmdItem) =
@@ -74,7 +75,8 @@ data class UgcItem(
                 danmaku = videoInfo.stat.danmaku,
                 dimension = Dimension.fromDimension(videoInfo.dimension),
                 authorFace = videoInfo.owner.face,
-                pubDate = videoInfo.pubdate.toLong()
+                pubDate = videoInfo.pubdate.toLong(),
+                desc = videoInfo.desc
             )
 
         fun fromSmallCoverV5(card: bilibili.app.card.v1.SmallCoverV5) =

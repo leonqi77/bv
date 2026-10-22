@@ -150,9 +150,9 @@ private fun HeaderContent(item: HomeFeaturedItem) {
                     maxLines = 1
                 )
             }
-            if (item.description.isNotBlank()) {
+            item.description?.let { description ->
                 Text(
-                    text = item.description,
+                    text = description,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
