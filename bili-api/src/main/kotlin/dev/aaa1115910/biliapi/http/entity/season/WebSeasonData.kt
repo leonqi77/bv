@@ -506,7 +506,7 @@ data class Rating(
  */
 @Serializable
 data class Area(
-    val id: Int,
+    val id: Int = 0,
     val name: String
 )
 
